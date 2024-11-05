@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6801133ea68e2a2498efd9dc5b221c54, type: 3}
+  m_Name: MiniGun
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 7009953311785232023, guid: 8955f55d66a470145add0543f6a4369a, type: 3}
+  fireRate: 15
+  bulletSpeed: 15
+  bulletDamage: 1
+  range: 10
+  rotationSpeed: 5
+  health: 100
+  cost: 100
+  baseSprite: {fileID: 21300000, guid: ae4df9f5c7d5e5d4a8043d9a5b5bbe79, type: 3}
+  turretSprite: {fileID: 21300000, guid: e3459687b20f2e143b0656cc2214be4d, type: 3}
+  firePoint: {fileID: 0}
