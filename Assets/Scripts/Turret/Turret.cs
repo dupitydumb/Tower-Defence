@@ -1,22 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 
 public class Turret : MonoBehaviour
 {
     [SerializeField]
     public TurretData data; // The data of the turret
     public Transform firePoint; // The fire point
-
     private float fireTimer = 0.0f;
-
     public GameObject rangeIndicator; // The range indicator
+    bool isSelected = false;
+
+    public List<InventoryItem> itemNeeded = new List<InventoryItem>();
     // Start is called before the first frame update
     void Start()
     {
         rangeIndicator = transform.Find("Range").gameObject;
         rangeIndicator.transform.localScale = new Vector3(0, 0, 1);
-        rangeIndicator.transform.localScale = new Vector3(data.range, data.range, 1);
+        rangeIndicator.transform.localScale = new Vector3(data.range * 2.5f, data.range * 2.5f, 1);
     }
 
     // Update is called once per frame
@@ -31,8 +34,38 @@ public class Turret : MonoBehaviour
                 fireTimer = 0.0f;
             }   
         }
+
+
+        //If mouse is over the turret, show the range indicator
+
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+        {
+            isSelected = false;
+        }
+
+        if (isSelected)
+        {
+            rangeIndicator.SetActive(true);
+        }
+        else
+        {
+            rangeIndicator.SetActive(false);
+        }
     }
 
+
+
+    void OnMouseOver()
+    {
+        Debug.Log("Mouse is over the turret");
+        isSelected = true;
+    }
+
+    void OnMouseExit()
+    {
+        Debug.Log("Mouse is not over the turret");
+        isSelected = false;
+    }
     GameObject GetEnemy()
     {
         // Get all the colliders in the range of the turret

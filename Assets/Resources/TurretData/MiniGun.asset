@@ -16,7 +16,7 @@ MonoBehaviour:
   fireRate: 15
   bulletSpeed: 15
   bulletDamage: 1
-  range: 10
+  range: 5
   rotationSpeed: 5
   health: 100
   cost: 100
