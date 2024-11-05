@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public List<GameObject> targetDestination = new List<GameObject>();
     public bool isDummy = false;
     public float health = 100;
     public float speed = 1.0f;
@@ -11,13 +12,47 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        SetDestination();
     }
 
+
+    void SetDestination()
+    {
+        GameObject target = GameObject.Find("EnemyLine");
+        //foreach child in targetDestination add to list
+        foreach (Transform child in target.transform)
+        {
+            //skip child number 0
+            if (child.GetSiblingIndex() == 0)
+            {
+                continue;
+            }
+            targetDestination.Add(child.gameObject);
+        }
+    }
     // Update is called once per frame
     void Update()
     {
-        
+        Move();
+    }
+    private int currentDestinationIndex = 0;
+    void Move()
+    {
+        if (targetDestination.Count == 0)
+        {
+            return;
+        }
+        Vector3 direction = targetDestination[currentDestinationIndex].transform.position - transform.position;
+        transform.position += direction.normalized * speed * Time.deltaTime;
+        if (Vector3.Distance(transform.position, targetDestination[currentDestinationIndex].transform.position) < 0.1f)
+        {
+            currentDestinationIndex++;
+            if (currentDestinationIndex >= targetDestination.Count)
+            {
+                Destroy(gameObject);
+            }
+        }
+
     }
 
     public void TakeDamage(float damage)

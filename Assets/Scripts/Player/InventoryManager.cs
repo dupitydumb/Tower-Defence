@@ -38,6 +38,20 @@ public class InventoryManager : MonoBehaviour
         OnInventoryChanged?.Invoke();
     }
 
+    public void RemoveItem(ItemsType type, int amount)
+    {
+        InventoryItem item = items.Find(i => i.type == type);
+        if (item != null)
+        {
+            item.amount -= amount;
+            if (item.amount <= 0)
+            {
+                items.Remove(item);
+            }
+        }
+        OnInventoryChanged?.Invoke();
+    }
+
     public int GetAmount(ItemsType type)
     {
         InventoryItem item = items.Find(i => i.type == type);

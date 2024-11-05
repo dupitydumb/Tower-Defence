@@ -119,11 +119,20 @@ public class PlayerBuild : MonoBehaviour
         if (currentBuildType == BuildType.Turret)
         {
             turret.transform.GetComponent<Turret>().isEnable = true;
+            foreach (var item in turret.transform.GetComponent<Turret>().itemNeeded)
+            {
+                inventoryManager.RemoveItem(item.type, item.amount);
+            }
         }
         if (currentBuildType == BuildType.Building)
         {
             turret.transform.GetComponent<BuildingMining>().isEnable = true;
+            foreach (var item in turret.transform.GetComponent<BuildingMining>().itemNeeded)
+            {
+                inventoryManager.RemoveItem(item.type, item.amount);
+            }
         }
+        // Deduct the items needed from the inventory
     }
 
     bool CheckPosition(Vector3 position)
