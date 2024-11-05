@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 public class Turret : MonoBehaviour
 {
     [SerializeField]
+    public bool isEnable = false;
     public TurretData data; // The data of the turret
     public Transform firePoint; // The fire point
     private float fireTimer = 0.0f;
@@ -14,17 +15,35 @@ public class Turret : MonoBehaviour
     bool isSelected = false;
 
     public List<InventoryItem> itemNeeded = new List<InventoryItem>();
+    private GameObject canvasUI;
     // Start is called before the first frame update
     void Start()
     {
         rangeIndicator = transform.Find("Range").gameObject;
         rangeIndicator.transform.localScale = new Vector3(0, 0, 1);
         rangeIndicator.transform.localScale = new Vector3(data.range * 2.5f, data.range * 2.5f, 1);
+        canvasUI = gameObject.transform.Find("Canvas").gameObject;
+        SetNeededItemUI();
     }
 
+
+    void SetNeededItemUI()
+    {
+        Debug.Log("Setting needed item UI");
+        foreach (var item in itemNeeded)
+        {
+            GameObject itemUI = Instantiate(Resources.Load<GameObject>("Prefabs/UI/NeedUI"), canvasUI.transform);
+            itemUI.GetComponent<NeedUI>().item = item;
+        }
+    }
     // Update is called once per frame
     void Update()
     {
+        // If the turret is not enabled, return
+        if (!isEnable)
+        {
+            return;
+        }
         if (isTurretFacingEnemy(GetEnemy()))
         {
             fireTimer += Time.deltaTime;

@@ -30,16 +30,28 @@ public class PlayerBuild : MonoBehaviour
         // Update the preview object's position
         if (previewObject != null)
         UpdatePreviewPosition(previewObject);
-
     }
 
+    private BuildType currentBuildType;
     public GameObject previewObject;
-    public void SetIsPlacing(string prefab)
+    public void SetIsPlacing(string prefab, BuildType buildType)
     {
         // Create a preview object
-
         Debug.Log("Prefabs location: " + "Prefabs/Turret" + prefab);
-        prefabToPlace = Resources.Load<GameObject>("Prefabs/Turret/" + prefab);
+        switch (buildType)
+        {
+            case BuildType.Turret:
+                prefabToPlace = Resources.Load<GameObject>("Prefabs/Turret/" + prefab);
+                currentBuildType = BuildType.Turret;
+                break;
+            case BuildType.Building:
+                prefabToPlace = Resources.Load<GameObject>("Prefabs/Building/" + prefab);
+                currentBuildType = BuildType.Building;
+                break;
+            default:
+                break;
+        }
+
         if (previewObject != null)
         {
             Destroy(previewObject);
@@ -47,8 +59,18 @@ public class PlayerBuild : MonoBehaviour
         GameObject preview = Instantiate(prefabToPlace);
         previewObject = preview;
         //disable Turnet script
-        previewObject.GetComponent<Turret>().enabled = false;
+        if (buildType == BuildType.Turret)
+        {
+            previewObject.GetComponent<Turret>().isEnable = false;
+            
+        }
+        //disable BuildingMining script
+        if (buildType == BuildType.Building)
+        {
+            previewObject.GetComponent<BuildingMining>().isEnable = false;
+        }
         previewObject.GetComponent<BoxCollider2D>().isTrigger = true;
+        previewObject.transform.Find("Canvas").gameObject.SetActive(true);
         isPlacing = true;
     }
 
@@ -62,9 +84,12 @@ public class PlayerBuild : MonoBehaviour
         // Update the preview object's position
         prefab.transform.position = snappedPosition;
 
-        GameObject rangeIndicator = prefab.transform.Find("Range").gameObject;
-        rangeIndicator.transform.localScale = new Vector3(0, 0, 1);
-        rangeIndicator.transform.localScale = new Vector3(prefab.GetComponent<Turret>().data.range * 2.5f, prefab.GetComponent<Turret>().data.range * 2.5f, 1);
+        if (currentBuildType == BuildType.Turret)
+        {
+            GameObject rangeIndicator = prefab.transform.Find("Range").gameObject;
+            rangeIndicator.transform.localScale = new Vector3(0, 0, 1);
+            rangeIndicator.transform.localScale = new Vector3(prefab.GetComponent<Turret>().data.range * 2.5f, prefab.GetComponent<Turret>().data.range * 2.5f, 1);
+        }
 
         GameObject validSprite = prefab.transform.Find("Valid").gameObject;
         validSprite.SetActive(true);
@@ -91,12 +116,27 @@ public class PlayerBuild : MonoBehaviour
         // Instantiate the prefab at the preview object's position
         GameObject turret = Instantiate(prefabToPlace, previewObject.transform.position, Quaternion.identity);
         turret.transform.GetComponent<BoxCollider2D>().enabled = true;
-        turret.transform.GetComponent<Turret>().enabled = true;
+        if (currentBuildType == BuildType.Turret)
+        {
+            turret.transform.GetComponent<Turret>().isEnable = true;
+        }
+        if (currentBuildType == BuildType.Building)
+        {
+            turret.transform.GetComponent<BuildingMining>().isEnable = true;
+        }
     }
 
     bool CheckPosition(Vector3 position)
     {
-        List<InventoryItem> itemsNeeded = previewObject.GetComponent<Turret>().itemNeeded;
+        List<InventoryItem> itemsNeeded = new List<InventoryItem>();
+        if (currentBuildType == BuildType.Turret)
+        {
+            itemsNeeded = previewObject.GetComponent<Turret>().itemNeeded;
+        }
+        else
+        {
+            itemsNeeded = previewObject.GetComponent<BuildingMining>().itemNeeded;
+        }
         if (previewObject.GetComponent<BoxCollider2D>().IsTouchingLayers(LayerMask.GetMask("Obstacle")))
         {
             return false;
@@ -107,6 +147,27 @@ public class PlayerBuild : MonoBehaviour
             if (inventoryItem == null || inventoryItem.amount < item.amount)
             {
                 return false;
+            }
+        }
+        if (currentBuildType == BuildType.Building)
+        {
+            BoxCollider2D collider = previewObject.GetComponent<BoxCollider2D>();
+            switch (previewObject.GetComponent<BuildingMining>().type)
+            {
+                case ItemsType.Iron:
+                    // If collider is ontop of gold collider
+                    if (!collider.IsTouchingLayers(LayerMask.GetMask("Iron")))
+                    {
+                        return false;
+                    }
+                    break;
+                case ItemsType.Gold:
+                    if (!collider.IsTouchingLayers(LayerMask.GetMask("Gold")))
+                    {
+                        return false;
+                    }
+                    break;
+                    
             }
         }
         

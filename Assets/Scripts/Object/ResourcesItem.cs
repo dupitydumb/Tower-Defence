@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Tree : MonoBehaviour
+public class ResourcesItem : MonoBehaviour
 {
-
+    public ItemsType type;
     private GameObject player;
 
+    private InventoryManager inventoryManager;
     public float cutTime = 2.0f;
     private float cutTimer = 0.0f;
 
@@ -15,6 +16,7 @@ public class Tree : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        inventoryManager = GameObject.FindObjectOfType<InventoryManager>();
         player = GameObject.FindWithTag("Player");
         progressBar = gameObject.GetComponentInChildren<Slider>();
         progressBar.maxValue = cutTime;
@@ -30,7 +32,7 @@ public class Tree : MonoBehaviour
 
     void CutTree()
     {
-        if (Vector3.Distance(player.transform.position, transform.position) < 2.0f)
+        if (Vector3.Distance(player.transform.position, transform.position) < 1f)
         {
             progressBar.gameObject.SetActive(true);
             if (Input.GetKey(KeyCode.R))
@@ -40,7 +42,17 @@ public class Tree : MonoBehaviour
                 progressBar.value = cutTimer;
                 if (cutTimer >= cutTime)
                 {
-                    SpawnWood();
+                    switch (type)
+                    {
+                        case ItemsType.Wood:
+                            SpawnWood();
+                            break;
+                        case ItemsType.Stone:
+                            AddStone();
+                            break;
+                        default:
+                            break;
+                    }
                     Destroy(gameObject);
                 }
             }
@@ -58,6 +70,10 @@ public class Tree : MonoBehaviour
     {
         GameObject wood = Instantiate(Resources.Load("Prefabs/Items/Wood"), transform.position, Quaternion.identity) as GameObject;
         wood.GetComponent<ResourcesItems>().amount = Random.Range(10, 25);
+    }
 
+    void AddStone()
+    {
+        inventoryManager.AddItem(type, Random.Range(4, 10));   
     }
 }

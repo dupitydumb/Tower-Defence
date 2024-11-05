@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BuildUI : MonoBehaviour
 {
-
+    public BuildType buildType;
     public string turretPrefab;
 
     PlayerBuild playerBuild;
@@ -23,6 +23,12 @@ public class BuildUI : MonoBehaviour
     public void BuildClicked()
     {
         Debug.Log("Build clicked");
-        playerBuild.SetIsPlacing(turretPrefab);
+        playerBuild.SetIsPlacing(turretPrefab, buildType);
     }
+}
+
+public enum BuildType
+{
+    Turret,
+    Building
 }
