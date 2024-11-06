@@ -6,6 +6,7 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    public UpgradeBuildingUI upgradeBuildingUI;
     public EnemySpawner enemySpawner;
     public Action OnResearchAdded;
     public GameState gameState = GameState.Day;
@@ -36,7 +37,21 @@ public class GameManager : MonoBehaviour
         UpdateEnemyLeftText();
         enemySpawner.OnEnemyDeath += UpdateEnemyLeftText;
     }
+    void OnDisable()
+    {
+        ResetResearchItems();
+    }
 
+    void ResetResearchItems()
+    {
+        foreach (var item in researchedItems)
+        {
+            item.isUnlocked = false;
+            item.isResearched = false;
+            item.isOnProgress = false;
+        }
+        researchedItems.Clear();
+    }
     public void SpeedTime(int speed)
     {
         Time.timeScale = speed;
@@ -76,12 +91,13 @@ public class GameManager : MonoBehaviour
     {
         enemyLeftText.text = enemySpawner.enemiesRemaining.ToString();
     }
-
+    public Action OnStateChange;
     public void NextDay()
     {
         if (gameState == GameState.Day)
         {
             gameState = GameState.Night;
+            OnStateChange?.Invoke();
             enemySpawner.StartWave(currentDay - 1);
             CameraFollow cam = FindObjectOfType<CameraFollow>();
             cam.MoveToEnemySpawn();
@@ -92,8 +108,11 @@ public class GameManager : MonoBehaviour
             {
                 return;
             }
+            enemySpawner.enemiesRemaining = 0;
+            enemySpawner.OnEnemyDeath?.Invoke();
             gameState = GameState.Day;
             currentDay++;
+            dayText.text = "Day " + currentDay;
             foreach (var item in pendingItems)
             {
                 researchedItems.Add(item);

@@ -11,25 +11,37 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;
     private Rigidbody2D rb;
     private Vector2 movement;
+    public Transform playerPosAtNight;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        GameManager.instance.OnStateChange += SetPlaceAtNight;
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Capture input
-        movement.x = Input.GetAxis("Horizontal");
-        movement.y = Input.GetAxis("Vertical");
+        
 
 
     }
 
+
+    void SetPlaceAtNight()
+    {
+        transform.position = playerPosAtNight.position;
+    }
     void FixedUpdate()
     {
+        if (GameManager.instance.gameState == GameState.Night)
+        {
+            return;
+        }
+        // Capture input
+        movement.x = Input.GetAxis("Horizontal");
+        movement.y = Input.GetAxis("Vertical");
         // Move the player
         rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
         SetPlayerSprites();

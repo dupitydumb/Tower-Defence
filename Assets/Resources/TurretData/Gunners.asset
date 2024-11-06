@@ -12,11 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6801133ea68e2a2498efd9dc5b221c54, type: 3}
   m_Name: Gunners
   m_EditorClassIdentifier: 
+  fireRateLevel: 1
+  bulletSpeedLevel: 1
+  bulletDamageLevel: 1
+  rangeLevel: 1
   bulletPrefab: {fileID: 7009953311785232023, guid: 8955f55d66a470145add0543f6a4369a, type: 3}
-  fireRate: 1
-  bulletSpeed: 10
-  bulletDamage: 20
-  range: 5
+  upgradeCost: 320000004b00000064000000
+  fireRate:
+  - 3
+  - 1.5
+  - 1
+  bulletSpeed:
+  - 5
+  bulletDamage:
+  - 15
+  - 25
+  - 30
+  range:
+  - 7
+  - 10
+  - 11
   rotationSpeed: 1
   health: 100
   cost: 100

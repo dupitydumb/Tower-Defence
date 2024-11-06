@@ -17,5 +17,6 @@ MonoBehaviour:
   cost: 100
   names: Rapid Fire Mechanism III
   description: Increase attack speed for all towers.
+  isOnProgress: 0
   isResearched: 0
   isUnlocked: 0

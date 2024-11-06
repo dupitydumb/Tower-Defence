@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Data.Common;
 
 public class PlayerBuild : MonoBehaviour
 {
@@ -21,6 +22,10 @@ public class PlayerBuild : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.instance.gameState == GameState.Night)
+        {
+            return;
+        }
 
         if (Input.GetMouseButtonDown(1) && isPlacing)
         {
@@ -36,6 +41,10 @@ public class PlayerBuild : MonoBehaviour
     public GameObject previewObject;
     public void SetIsPlacing(string prefab, BuildType buildType)
     {
+        if (GameManager.instance.gameState == GameState.Night)
+        {
+            return;
+        }
         // Create a preview object
         Debug.Log("Prefabs location: " + "Prefabs/Turret" + prefab);
         switch (buildType)
@@ -88,7 +97,7 @@ public class PlayerBuild : MonoBehaviour
         {
             GameObject rangeIndicator = prefab.transform.Find("Range").gameObject;
             rangeIndicator.transform.localScale = new Vector3(0, 0, 1);
-            rangeIndicator.transform.localScale = new Vector3(prefab.GetComponent<Turret>().data.range * 2.5f, prefab.GetComponent<Turret>().data.range * 2.5f, 1);
+            rangeIndicator.transform.localScale = new Vector3(prefab.GetComponent<Turret>().data.range[0] * 2.5f, prefab.GetComponent<Turret>().data.range[0] * 2.5f, 1);
         }
 
         GameObject validSprite = prefab.transform.Find("Valid").gameObject;

@@ -17,5 +17,6 @@ MonoBehaviour:
   cost: 100
   names: Advanced Generators III
   description: Increase resource generation from static structures.
+  isOnProgress: 0
   isResearched: 0
   isUnlocked: 0

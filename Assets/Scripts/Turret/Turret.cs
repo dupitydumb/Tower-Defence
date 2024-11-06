@@ -16,15 +16,18 @@ public class Turret : MonoBehaviour
 
     public float damageModifier = 1.0f;
     public float speedModifier = 1.0f;
+    public float rangeModifier = 1.0f;
     public List<InventoryItem> itemNeeded = new List<InventoryItem>();
     private GameObject canvasUI;
+    private UpgradeBuildingUI upgradeBuildingUI;
     // Start is called before the first frame update
     void Start()
     {
         rangeIndicator = transform.Find("Range").gameObject;
         rangeIndicator.transform.localScale = new Vector3(0, 0, 1);
-        rangeIndicator.transform.localScale = new Vector3(data.range * 2.5f, data.range * 2.5f, 1);
+        rangeIndicator.transform.localScale = new Vector3(data.range[data.rangeLevel - 1] * 2.5f, data.range[data.rangeLevel - 1] * 2.5f, 1);
         canvasUI = gameObject.transform.Find("Canvas").gameObject;
+        upgradeBuildingUI = GameManager.instance.upgradeBuildingUI;
         SetNeededItemUI();
     }
 
@@ -49,7 +52,7 @@ public class Turret : MonoBehaviour
         if (isTurretFacingEnemy(GetEnemy()))
         {
             fireTimer += Time.deltaTime;
-            if (fireTimer >= 1.0f / data.fireRate * speedModifier)
+            if (fireTimer >= 1.0f / data.fireRate[data.fireRateLevel - 1] * speedModifier)
             {
                 Fire(GetEnemy());
                 fireTimer = 0.0f;
@@ -80,6 +83,11 @@ public class Turret : MonoBehaviour
     {
         Debug.Log("Mouse is over the turret");
         isSelected = true;
+        rangeIndicator.transform.localScale = new Vector3(data.range[data.rangeLevel - 1] * 2.5f, data.range[data.rangeLevel - 1] * 2.5f, 1);
+        if (Input.GetMouseButtonDown(0))
+        {
+            upgradeBuildingUI.SetSelectedTurret(this);
+        }
     }
 
     void OnMouseExit()
@@ -90,7 +98,7 @@ public class Turret : MonoBehaviour
     GameObject GetEnemy()
     {
         // Get all the colliders in the range of the turret
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, data.range);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, data.range[data.rangeLevel - 1] * rangeModifier);
         // Loop through all the colliders
         foreach (var collider in colliders)
         {
@@ -126,8 +134,8 @@ public class Turret : MonoBehaviour
         Bullet bulletComponent = bullet.GetComponent<Bullet>();
         bulletComponent.target = enemy;
         // Set the bullet's speed
-        bulletComponent.speed = data.bulletSpeed;
+        bulletComponent.speed = data.bulletSpeed[data.bulletSpeedLevel - 1] * speedModifier;
         // Set the bullet's damage
-        bulletComponent.damage = data.bulletDamage * damageModifier;
+        bulletComponent.damage = data.bulletDamage[data.bulletDamageLevel - 1] * damageModifier;
     }
 }
