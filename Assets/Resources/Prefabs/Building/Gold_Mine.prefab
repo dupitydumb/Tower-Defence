@@ -316,9 +316,12 @@ MonoBehaviour:
   type: 3
   health: 100
   maxHealth: 100
-  miningRate: 5
+  miningRate: 1
   modifier: 1
-  itemNeeded: []
+  itemNeeded:
+  - icon: {fileID: 21300000, guid: 44f37a76245c1e04db3f9a4f2198fa1d, type: 3}
+    type: 2
+    amount: 250
 --- !u!61 &1995052781326395894
 BoxCollider2D:
   m_ObjectHideFlags: 0

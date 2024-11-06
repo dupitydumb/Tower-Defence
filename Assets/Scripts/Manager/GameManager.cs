@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text dayText; // Reference to the UI Text component for displaying the day
     public TMP_Text enemyLeftText; // Reference to the UI Text component for displaying the number of enemies left
     private float timer = 0.0f;
-    private const float dayDuration = 60.0f; // 5 minutes in seconds
+    private const float dayDuration = 300.0f; // 5 minutes in seconds
     private void Awake()
     {
         if (instance == null)

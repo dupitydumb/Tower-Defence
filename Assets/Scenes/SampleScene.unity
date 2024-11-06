@@ -17257,6 +17257,14 @@ MonoBehaviour:
     enemyCount: 10
     spawnRate: 1
     timeBetweenWaves: 5
+  - waveNumber: 3
+    enemyCount: 13
+    spawnRate: 0.2
+    timeBetweenWaves: 5
+  - waveNumber: 4
+    enemyCount: 16
+    spawnRate: 0.5
+    timeBetweenWaves: 5
   waveNumber: 0
   enemiesRemaining: 0
 --- !u!1 &1941239381
