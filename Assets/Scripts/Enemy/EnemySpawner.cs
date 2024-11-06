@@ -1,16 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
+    public Action OnEnemyDeath;
     public GameObject enemyPrefab;
     public GameObject spawnPoint;
     public WaveData[] waves;
+
+    public int waveNumber = 0;
+    public int enemiesRemaining = 0;
     // Start is called before the first frame update
     void Start()
     {
-        StartWave(0);
+
     }
 
     // Update is called once per frame
@@ -30,6 +35,8 @@ public class EnemySpawner : MonoBehaviour
         for (int i = 0; i < wave.enemyCount; i++)
         {
             Instantiate(enemyPrefab, spawnPoint.transform.position, Quaternion.identity);
+            enemiesRemaining++;
+            OnEnemyDeath.Invoke();
             yield return new WaitForSeconds(wave.spawnRate);
         }
         yield return new WaitForSeconds(wave.timeBetweenWaves);

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca9c4da819a556544897c52febcecc7a, type: 3}
+  m_Name: Rapid Fire Mechanism III
+  m_EditorClassIdentifier: 
+  buffType: 0
+  modifier: 1.8
+  cost: 100
+  names: Rapid Fire Mechanism III
+  description: Increase attack speed for all towers.
+  isResearched: 0
+  isUnlocked: 0

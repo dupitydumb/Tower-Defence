@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    EnemySpawner enemySpawner;
     public List<GameObject> targetDestination = new List<GameObject>();
     public bool isDummy = false;
     public float health = 100;
@@ -13,6 +14,7 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         SetDestination();
+        enemySpawner = FindObjectOfType<EnemySpawner>();
     }
 
 
@@ -64,6 +66,8 @@ public class Enemy : MonoBehaviour
         health -= damage;
         if (health <= 0)
         {
+            enemySpawner.enemiesRemaining--;
+            enemySpawner.OnEnemyDeath?.Invoke();
             Die();
         }
     }

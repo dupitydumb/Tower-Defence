@@ -14,6 +14,8 @@ public class Turret : MonoBehaviour
     public GameObject rangeIndicator; // The range indicator
     bool isSelected = false;
 
+    public float damageModifier = 1.0f;
+    public float speedModifier = 1.0f;
     public List<InventoryItem> itemNeeded = new List<InventoryItem>();
     private GameObject canvasUI;
     // Start is called before the first frame update
@@ -47,7 +49,7 @@ public class Turret : MonoBehaviour
         if (isTurretFacingEnemy(GetEnemy()))
         {
             fireTimer += Time.deltaTime;
-            if (fireTimer >= 1.0f / data.fireRate)
+            if (fireTimer >= 1.0f / data.fireRate * speedModifier)
             {
                 Fire(GetEnemy());
                 fireTimer = 0.0f;
@@ -126,6 +128,6 @@ public class Turret : MonoBehaviour
         // Set the bullet's speed
         bulletComponent.speed = data.bulletSpeed;
         // Set the bullet's damage
-        bulletComponent.damage = data.bulletDamage;
+        bulletComponent.damage = data.bulletDamage * damageModifier;
     }
 }

@@ -10,7 +10,7 @@ public class BuildingMining : MonoBehaviour
     public int health = 100;
     public int maxHealth = 100;
     public int miningRate = 10;
-
+    public float modifier = 1.0f;    
     public List<InventoryItem> itemNeeded = new List<InventoryItem>();
     private InventoryManager inventoryManager;
     private float miningTimer = 0.0f;
@@ -41,7 +41,7 @@ public class BuildingMining : MonoBehaviour
     void Mine()
     {
         miningTimer += Time.deltaTime;
-        if (miningTimer >= 1.0f / miningRate)
+        if (miningTimer >= 1.0f / miningRate * modifier)
         {
             miningTimer = 0.0f;
             inventoryManager.AddItem(type, 1);
