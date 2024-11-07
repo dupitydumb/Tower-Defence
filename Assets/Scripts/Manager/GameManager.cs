@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public UpgradeBuildingUI upgradeBuildingUI;
     public EnemySpawner enemySpawner;
     public Action OnResearchAdded;
+    public Action OnDayChange;
     public GameState gameState = GameState.Day;
     public static GameManager instance;
     public List<ResearchItems> researchedItems = new List<ResearchItems>();
@@ -18,6 +19,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text enemyLeftText; // Reference to the UI Text component for displaying the number of enemies left
     private float timer = 0.0f;
     private const float dayDuration = 300.0f; // 5 minutes in seconds
+    public GameObject researchUI;
     private void Awake()
     {
         if (instance == null)
@@ -65,19 +67,20 @@ public class GameManager : MonoBehaviour
         if (timer >= dayDuration)
         {
             NextDay();
-            timer = 0.0f;
         }
 
         UpdateClockText();
     }
 
-    private List<ResearchItems> pendingItems = new List<ResearchItems>();
-    public void AddResearch(ResearchItems item)
+    private List<TurretData> pendingItems = new List<TurretData>();
+    public void AddResearch(TurretData item)
     {
-        Debug.Log("Adding research : " + item.names);
-        // Wait 1 day before adding the research
+        if (item.isUnlocked)
+        {
+            return;
+        }
         pendingItems.Add(item);
-        item.isOnProgress = true;
+        item.isResearched = true;
         OnResearchAdded?.Invoke();
     }
     void UpdateClockText()
@@ -90,6 +93,10 @@ public class GameManager : MonoBehaviour
     void UpdateEnemyLeftText()
     {
         enemyLeftText.text = enemySpawner.enemiesRemaining.ToString();
+        if (enemySpawner.enemiesRemaining <= 0)
+        {
+            enemyLeftText.text = "0";
+        }
     }
     public Action OnStateChange;
     public void NextDay()
@@ -101,6 +108,7 @@ public class GameManager : MonoBehaviour
             enemySpawner.StartWave(currentDay - 1);
             CameraFollow cam = FindObjectOfType<CameraFollow>();
             cam.MoveToEnemySpawn();
+            timer = 0.0f;
         }
         else
         {
@@ -115,10 +123,29 @@ public class GameManager : MonoBehaviour
             dayText.text = "Day " + currentDay;
             foreach (var item in pendingItems)
             {
-                researchedItems.Add(item);
+                item.isUnlocked = true;
             }
+            timer = 0.0f;
+            OnDayChange?.Invoke();
             pendingItems.Clear();
         }
+    }
+
+    public GameObject gameOverUI;
+    public TMP_Text gameOverStats;
+    public void ShowGameOver()
+    {
+        researchUI.SetActive(false);
+        upgradeBuildingUI.gameObject.SetActive(false);
+        Time.timeScale = 0;
+        gameOverUI.SetActive(true);
+        gameOverStats.text = "You survived " + currentDay + " days";
+
+    }
+
+    public void ResetGame()
+    {
+
     }
 }
 

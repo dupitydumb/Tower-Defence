@@ -13,7 +13,7 @@ public class PerlinNoise : MonoBehaviour
     public float treeThreshold = 0.5f;
     public float stoneThreshold = 0.4f;
 
-    private Tilemap tilemap;
+    public Tilemap tilemap;
     private Grid grid;
     public GameObject perlinTilePrefab;
     private GameObject enviromentParent;
@@ -24,7 +24,6 @@ public class PerlinNoise : MonoBehaviour
     {
         //Get component type of Grid
         grid = GameObject.FindObjectOfType<Grid>();
-        tilemap = GameObject.FindObjectOfType<Tilemap>();
         enviromentParent = new GameObject("Enviroment");
         GenerateNoise();
     }
@@ -50,23 +49,37 @@ public class PerlinNoise : MonoBehaviour
                 if (sample > treeThreshold)
                 {
                     //Check tilemapRenderer, is there any tilemap
-                    if (!tilemap.HasTile(cellPosition) && !perlinTiles.ContainsKey(cellPosition))
+                    if (!perlinTiles.ContainsKey(cellPosition))
                     {
                         GameObject trees = Instantiate(treePrefab[Random.Range(0, treePrefab.Length)], grid.GetCellCenterWorld(cellPosition), Quaternion.identity);
                         perlinTiles.Add(cellPosition, perlinTile);
                         trees.transform.parent = enviromentParent.transform;
+                        if (tilemap.HasTile(cellPosition))
+                        {
+                            if (tilemap.GetTile(cellPosition).name == "Desert")
+                            {
+                                Destroy(trees);
+                            }
+                        }
                     }
                     
                 }
                 // Check if the sample is greater than the stoneThreshold
                 if (sample > stoneThreshold)
                 {
-                    //Check tilemapRenderer, is there any tilemap
-                    if (!tilemap.HasTile(cellPosition) && !perlinTiles.ContainsKey(cellPosition))
+                    //Check tilemapRenderer, is there tile name "Desert" 
+                    if (!perlinTiles.ContainsKey(cellPosition))
                     {
                         GameObject stones = Instantiate(stone[Random.Range(0, stone.Length)], grid.GetCellCenterWorld(cellPosition), Quaternion.identity) as GameObject;
                         perlinTiles.Add(cellPosition, perlinTile);
                         stones.transform.parent = enviromentParent.transform;
+                        if (tilemap.HasTile(cellPosition))
+                        {
+                            if (tilemap.GetTile(cellPosition).name == "Desert")
+                            {
+                                Destroy(stones);
+                            }
+                        }
                     }
                 }
             }

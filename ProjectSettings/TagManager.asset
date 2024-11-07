@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Enemy
   - Gold
+  - ResearchUI
+  - Obstacle
+  - Reactor
   layers:
   - Default
   - TransparentFX
@@ -16,8 +19,8 @@ TagManager:
   - Gold
   - Iron
   - Obstacle
-  - 
-  - 
+  - ResearchUI
+  - Enemy
   - 
   - 
   - 

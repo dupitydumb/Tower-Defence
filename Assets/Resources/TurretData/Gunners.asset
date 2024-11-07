@@ -12,16 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6801133ea68e2a2498efd9dc5b221c54, type: 3}
   m_Name: Gunners
   m_EditorClassIdentifier: 
+  shootSound: {fileID: 8300000, guid: aed5b88477b32a5479a40a6d8c4d37d6, type: 3}
+  isResearched: 1
+  isUnlocked: 1
+  turretName: Gunners
   fireRateLevel: 1
   bulletSpeedLevel: 1
   bulletDamageLevel: 1
   rangeLevel: 1
   bulletPrefab: {fileID: 7009953311785232023, guid: 8955f55d66a470145add0543f6a4369a, type: 3}
   upgradeCost: 320000004b00000064000000
+  unlockCost: 200
   fireRate:
-  - 3
-  - 1.5
-  - 1
+  - 4
+  - 5
+  - 6
   bulletSpeed:
   - 5
   bulletDamage:

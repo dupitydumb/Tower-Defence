@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System.Data.Common;
+using UnityEngine.Tilemaps;
 
 public class PlayerBuild : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class PlayerBuild : MonoBehaviour
     void Start()
     {
         inventoryManager = GameObject.FindObjectOfType<InventoryManager>();
+        tilemap = GameObject.FindObjectOfType<Tilemap>();
     }
 
     // Update is called once per frame
@@ -144,8 +146,12 @@ public class PlayerBuild : MonoBehaviour
         // Deduct the items needed from the inventory
     }
 
+    private Tilemap tilemap;
     bool CheckPosition(Vector3 position)
-    {
+    {   
+        //Check what layer the preview object is on
+        
+
         List<InventoryItem> itemsNeeded = new List<InventoryItem>();
         if (currentBuildType == BuildType.Turret)
         {
@@ -188,6 +194,7 @@ public class PlayerBuild : MonoBehaviour
                     
             }
         }
+
         
         // Check if the position is valid
         return true;

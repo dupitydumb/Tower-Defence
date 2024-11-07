@@ -28,18 +28,4 @@ public class SelectedDisplay : MonoBehaviour
     {
         
     }
-
-    public void SetDisplay(ResearchItems item)
-    {
-        Debug.Log("Setting display items : " + item.names);
-        researchItem = item;
-        names.text = researchItem.names;
-        description.text = researchItem.description;
-        button.onClick.AddListener(() => Research(researchItem));
-    }
-
-    public void Research(ResearchItems items)
-    {
-        GameManager.instance.AddResearch(items);
-    }
 }

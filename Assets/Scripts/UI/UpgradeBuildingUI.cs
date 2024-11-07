@@ -56,15 +56,15 @@ public class UpgradeBuildingUI : MonoBehaviour
         TMP_Text upgradeRangeText = upgradeRangeButton.transform.Find("Price").GetComponent<TMP_Text>();
         upgradeRangeText.text = selectedTurret.data.upgradeCost[selectedTurret.data.rangeLevel - 1].ToString();
 
-        if (selectedTurret.data.bulletDamageLevel >= selectedTurret.data.bulletDamage.Length - 1)
+        if (selectedTurret.data.bulletDamageLevel >= selectedTurret.data.bulletDamage.Length)
         {
             upgradeDamageButton.GetComponentInChildren<TMP_Text>().text = "Max";
         }
-        if (selectedTurret.data.fireRateLevel >= selectedTurret.data.fireRate.Length - 1)
+        if (selectedTurret.data.fireRateLevel >= selectedTurret.data.fireRate.Length)
         {
             upgradeFireRateButton.GetComponentInChildren<TMP_Text>().text = "Max";
         }
-        if (selectedTurret.data.rangeLevel >= selectedTurret.data.range.Length - 1)
+        if (selectedTurret.data.rangeLevel >= selectedTurret.data.range.Length)
         {
             upgradeRangeButton.GetComponentInChildren<TMP_Text>().text = "Max";
         }
@@ -73,7 +73,7 @@ public class UpgradeBuildingUI : MonoBehaviour
 
     void UpgradeDamage()
     {
-        if (selectedTurret.data.bulletDamageLevel >= selectedTurret.data.bulletDamage.Length - 1)
+        if (selectedTurret.data.bulletDamageLevel >= selectedTurret.data.bulletDamage.Length)
         {
             return;
         }
@@ -93,7 +93,7 @@ public class UpgradeBuildingUI : MonoBehaviour
 
     void UpgradeFireRate()
     {
-        if (selectedTurret.data.fireRateLevel >= selectedTurret.data.fireRate.Length - 1)
+        if (selectedTurret.data.fireRateLevel >= selectedTurret.data.fireRate.Length)
         {
             return;
         }
@@ -113,7 +113,7 @@ public class UpgradeBuildingUI : MonoBehaviour
 
     void UpgradeRange()
     {
-        if (selectedTurret.data.rangeLevel >= selectedTurret.data.range.Length - 1)
+        if (selectedTurret.data.rangeLevel >= selectedTurret.data.range.Length)
         {
             return;
         }

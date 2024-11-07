@@ -13,22 +13,22 @@ public class Turret : MonoBehaviour
     private float fireTimer = 0.0f;
     public GameObject rangeIndicator; // The range indicator
     bool isSelected = false;
-
-    public float damageModifier = 1.0f;
-    public float speedModifier = 1.0f;
-    public float rangeModifier = 1.0f;
+    private AudioSource audioSource;
     public List<InventoryItem> itemNeeded = new List<InventoryItem>();
     private GameObject canvasUI;
     private UpgradeBuildingUI upgradeBuildingUI;
     // Start is called before the first frame update
     void Start()
     {
+        data = data.Clone();
         rangeIndicator = transform.Find("Range").gameObject;
         rangeIndicator.transform.localScale = new Vector3(0, 0, 1);
         rangeIndicator.transform.localScale = new Vector3(data.range[data.rangeLevel - 1] * 2.5f, data.range[data.rangeLevel - 1] * 2.5f, 1);
         canvasUI = gameObject.transform.Find("Canvas").gameObject;
         upgradeBuildingUI = GameManager.instance.upgradeBuildingUI;
+        audioSource = GetComponent<AudioSource>();
         SetNeededItemUI();
+        audioSource.clip = data.shootSound;
     }
 
 
@@ -52,7 +52,7 @@ public class Turret : MonoBehaviour
         if (isTurretFacingEnemy(GetEnemy()))
         {
             fireTimer += Time.deltaTime;
-            if (fireTimer >= 1.0f / data.fireRate[data.fireRateLevel - 1] * speedModifier)
+            if (fireTimer >= 1.0f / data.fireRate[data.fireRateLevel - 1])
             {
                 Fire(GetEnemy());
                 fireTimer = 0.0f;
@@ -98,7 +98,7 @@ public class Turret : MonoBehaviour
     GameObject GetEnemy()
     {
         // Get all the colliders in the range of the turret
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, data.range[data.rangeLevel - 1] * rangeModifier);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, data.range[data.rangeLevel - 1]);
         // Loop through all the colliders
         foreach (var collider in colliders)
         {
@@ -134,8 +134,11 @@ public class Turret : MonoBehaviour
         Bullet bulletComponent = bullet.GetComponent<Bullet>();
         bulletComponent.target = enemy;
         // Set the bullet's speed
-        bulletComponent.speed = data.bulletSpeed[data.bulletSpeedLevel - 1] * speedModifier;
+        bulletComponent.speed = data.bulletSpeed[data.bulletSpeedLevel - 1];
         // Set the bullet's damage
-        bulletComponent.damage = data.bulletDamage[data.bulletDamageLevel - 1] * damageModifier;
+        bulletComponent.damage = data.bulletDamage[data.bulletDamageLevel - 1];
+        // Play the shoot sound
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
+        audioSource.Play();
     }
 }

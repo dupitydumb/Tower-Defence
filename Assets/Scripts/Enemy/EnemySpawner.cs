@@ -6,7 +6,6 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     public Action OnEnemyDeath;
-    public GameObject enemyPrefab;
     public GameObject spawnPoint;
     public WaveData[] waves;
 
@@ -34,7 +33,7 @@ public class EnemySpawner : MonoBehaviour
     {
         for (int i = 0; i < wave.enemyCount; i++)
         {
-            Instantiate(enemyPrefab, spawnPoint.transform.position, Quaternion.identity);
+            Instantiate(wave.enemyPrefabs[UnityEngine.Random.Range(0, wave.enemyPrefabs.Length)], spawnPoint.transform.position, Quaternion.identity);
             enemiesRemaining++;
             OnEnemyDeath.Invoke();
             yield return new WaitForSeconds(wave.spawnRate);
@@ -49,4 +48,5 @@ public class WaveData
     public int enemyCount;
     public float spawnRate;
     public float timeBetweenWaves;
+    public GameObject[] enemyPrefabs;
 }

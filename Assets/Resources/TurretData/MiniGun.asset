@@ -12,16 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6801133ea68e2a2498efd9dc5b221c54, type: 3}
   m_Name: MiniGun
   m_EditorClassIdentifier: 
+  shootSound: {fileID: 8300000, guid: 625b3fd322e7dab41be06122ff87cbaa, type: 3}
+  isResearched: 0
+  isUnlocked: 1
+  turretName: MiniGun
   fireRateLevel: 1
   bulletSpeedLevel: 1
   bulletDamageLevel: 1
   rangeLevel: 1
   bulletPrefab: {fileID: 7009953311785232023, guid: 8955f55d66a470145add0543f6a4369a, type: 3}
   upgradeCost: 320000004b00000064000000
+  unlockCost: 0
   fireRate:
-  - 2
-  - 0.7
-  - 0.5
+  - 8
+  - 9
+  - 10
   bulletSpeed:
   - 7
   bulletDamage:
