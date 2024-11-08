@@ -110,7 +110,7 @@ MonoBehaviour:
   itemNeeded:
   - icon: {fileID: 21300000, guid: 09613fe230fa27e4ca0b6a340424ccfc, type: 3}
     type: 0
-    amount: 0
+    amount: 25
 --- !u!61 &2705854238385848428
 BoxCollider2D:
   m_ObjectHideFlags: 0

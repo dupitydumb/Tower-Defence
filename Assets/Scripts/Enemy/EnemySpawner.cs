@@ -25,8 +25,24 @@ public class EnemySpawner : MonoBehaviour
 
     public void StartWave(int waveNumber)
     {
-        WaveData wave = waves[waveNumber];
-        StartCoroutine(SpawnWave(wave));
+        //if wave number is greater than the number of waves, return
+        if (waveNumber >= waves.Length)
+        {
+            //create a new wave randomly
+            WaveData wave = new WaveData();
+            wave.waveNumber = waveNumber;
+            wave.enemyCount = UnityEngine.Random.Range(1, 5) * waveNumber;
+            wave.spawnRate = UnityEngine.Random.Range(1, 5);
+            wave.timeBetweenWaves = UnityEngine.Random.Range(1, 5);
+            wave.enemyPrefabs = waves[3].enemyPrefabs;
+            waves[waveNumber] = wave;
+            StartCoroutine(SpawnWave(wave));
+        }
+        else
+        {
+            WaveData Levelwave = waves[waveNumber];
+            StartCoroutine(SpawnWave(Levelwave));
+        }
     }
 
     IEnumerator SpawnWave(WaveData wave)

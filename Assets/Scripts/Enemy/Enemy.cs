@@ -146,6 +146,7 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
+        GameManager.instance.inventoryManager.AddItem(ItemsType.Gold, 1);
         audioSource.PlayOneShot(deathSound);
         Destroy(gameObject);
     }

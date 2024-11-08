@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Sniper
   m_EditorClassIdentifier: 
   shootSound: {fileID: 8300000, guid: b70fece82180cdc439da0690a1992346, type: 3}
-  isResearched: 1
-  isUnlocked: 1
+  isResearched: 0
+  isUnlocked: 0
   turretName: Sniper
   fireRateLevel: 1
   bulletSpeedLevel: 1

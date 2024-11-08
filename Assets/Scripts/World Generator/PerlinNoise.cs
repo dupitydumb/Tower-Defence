@@ -31,6 +31,7 @@ public class PerlinNoise : MonoBehaviour
 
     void GenerateNoise()
     {
+
         for (int x = 0; x < gridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)

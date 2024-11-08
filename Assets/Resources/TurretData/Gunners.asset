@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Gunners
   m_EditorClassIdentifier: 
   shootSound: {fileID: 8300000, guid: aed5b88477b32a5479a40a6d8c4d37d6, type: 3}
-  isResearched: 1
-  isUnlocked: 1
+  isResearched: 0
+  isUnlocked: 0
   turretName: Gunners
   fireRateLevel: 1
   bulletSpeedLevel: 1

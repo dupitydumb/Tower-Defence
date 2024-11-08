@@ -5,9 +5,10 @@ using UnityEngine.UI;
 
 public class ResourcesItem : MonoBehaviour
 {
+    public AudioClip cutSound;
+    private AudioSource audioSource;
     public ItemsType type;
     private GameObject player;
-
     private InventoryManager inventoryManager;
     public float cutTime = 2.0f;
     private float cutTimer = 0.0f;
@@ -19,8 +20,11 @@ public class ResourcesItem : MonoBehaviour
         inventoryManager = GameObject.FindObjectOfType<InventoryManager>();
         player = GameObject.FindWithTag("Player");
         progressBar = gameObject.GetComponentInChildren<Slider>();
+        audioSource = gameObject.GetComponent<AudioSource>();
         progressBar.maxValue = cutTime;
         progressBar.value = cutTimer;
+        audioSource.clip = cutSound;
+
     }
 
     // Update is called once per frame
@@ -29,14 +33,21 @@ public class ResourcesItem : MonoBehaviour
         CutTree();
     }
 
-
+    private bool isSoundPlayed = false;
     void CutTree()
-    {
+    {  
+
+
         if (Vector3.Distance(player.transform.position, transform.position) < 1f)
         {
             progressBar.gameObject.SetActive(true);
             if (Input.GetKey(KeyCode.R))
             {
+                if (!isSoundPlayed)
+                {
+                    audioSource.Play();
+                    isSoundPlayed = true;
+                }
                 //Debug.Log("Cutting tree");
                 cutTimer += Time.deltaTime;
                 progressBar.value = cutTimer;
@@ -62,6 +73,8 @@ public class ResourcesItem : MonoBehaviour
             progressBar.gameObject.SetActive(false);
             cutTimer = 0.0f; // Reset the timer if the player moves away
             progressBar.value = cutTimer; // Reset the progress bar
+            isSoundPlayed = false;
+            audioSource.Stop();
         }
 
     }

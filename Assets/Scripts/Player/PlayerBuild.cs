@@ -4,9 +4,12 @@ using UnityEngine;
 using System.Linq;
 using System.Data.Common;
 using UnityEngine.Tilemaps;
+using Unity.VisualScripting;
 
 public class PlayerBuild : MonoBehaviour
 {
+    public AudioClip buildSound;
+    private AudioSource audioSource;
     public GameObject prefabToPlace; // The prefab to place
     public Grid grid; // Reference to the grid
     public Transform player; // Reference to the player's transform
@@ -19,6 +22,7 @@ public class PlayerBuild : MonoBehaviour
     {
         inventoryManager = GameObject.FindObjectOfType<InventoryManager>();
         tilemap = GameObject.FindObjectOfType<Tilemap>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -124,6 +128,7 @@ public class PlayerBuild : MonoBehaviour
 
     void PlacePrefab()
     {
+        audioSource.PlayOneShot(buildSound);
         // Instantiate the prefab at the preview object's position
         GameObject turret = Instantiate(prefabToPlace, previewObject.transform.position, Quaternion.identity);
         turret.transform.GetComponent<BoxCollider2D>().enabled = true;

@@ -336,9 +336,6 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: ed23fa7e77336414dbd642ad0cfb1d8b, type: 2}
   firePoint: {fileID: 6348130159461855411}
   rangeIndicator: {fileID: 0}
-  damageModifier: 1
-  speedModifier: 1
-  rangeModifier: 1
   itemNeeded:
   - icon: {fileID: 21300000, guid: 09613fe230fa27e4ca0b6a340424ccfc, type: 3}
     type: 0

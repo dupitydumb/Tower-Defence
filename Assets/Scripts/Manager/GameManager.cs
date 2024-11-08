@@ -6,6 +6,8 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    [HideInInspector]
+    public InventoryManager inventoryManager;
     public UpgradeBuildingUI upgradeBuildingUI;
     public EnemySpawner enemySpawner;
     public Action OnResearchAdded;
@@ -34,6 +36,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        inventoryManager = FindObjectOfType<InventoryManager>();
         enemySpawner = FindObjectOfType<EnemySpawner>();
         dayText.text = "Day " + currentDay;
         UpdateEnemyLeftText();
@@ -146,6 +149,11 @@ public class GameManager : MonoBehaviour
     public void ResetGame()
     {
 
+    }
+    public GameObject tutorialUI;
+    public void CloseTutorial()
+    {
+        tutorialUI.SetActive(false);
     }
 }
 
