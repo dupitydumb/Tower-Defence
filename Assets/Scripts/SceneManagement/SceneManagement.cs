@@ -6,7 +6,6 @@ public class SceneManagement : MonoBehaviour
 {
 
     public string sceneName;
-
     public void QuitGame()
     {
         Application.Quit();
@@ -25,5 +24,10 @@ public class SceneManagement : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void BackToMainMenu()
+    {
+        LoadScene("Menu");
     }
 }
