@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Linq;
+using Unity.Jobs;
+using Unity.Collections;
 
 public class PerlinNoise : MonoBehaviour
 {
@@ -114,6 +116,7 @@ public class PerlinNoise : MonoBehaviour
         Dictionary<Vector3Int, List<Vector3Int>> terrainGroups = new Dictionary<Vector3Int, List<Vector3Int>>();
 
         List<GameObject> objectsInChunk = new List<GameObject>();
+
         for (int x = 0; x < chunkSize; x++)
         {
             for (int y = 0; y < chunkSize; y++)
@@ -161,7 +164,12 @@ public class PerlinNoise : MonoBehaviour
                             obj.transform.SetParent(chunk.transform);
                             obj.SetActive(true);
                         }
-                        objectsInChunk.Add(obj);
+                        if (!chunk.GetComponent<Chunk>().objects.ContainsKey(cellPosition))
+                        {
+                            Debug.LogErrorFormat("Adding object : {0} to chunk : {1}", obj, chunk.GetComponent<Chunk>());
+                            chunk.GetComponent<Chunk>().objects.Add(cellPosition, obj);
+                        }
+
                     }
                     
                     generatedObjects.Add(cellPosition);
@@ -180,6 +188,22 @@ public class PerlinNoise : MonoBehaviour
         transform.GetChild(0).gameObject.SetActive(false);
     }
 
+    struct PerlinNoiseJob : IJobParallelFor
+    {
+        public Vector2Int chunkPosition;
+        public int chunkSize;
+        public float scale;
+        public NativeArray<float> samples;
+
+        public void Execute(int index)
+        {
+            int x = index % chunkSize;
+            int y = index / chunkSize;
+            float xCoord = ((chunkPosition.x * chunkSize + x) / (float)chunkSize * scale);
+            float yCoord = ((chunkPosition.y * chunkSize + y) / (float)chunkSize * scale);
+            samples[index] = Mathf.PerlinNoise(xCoord, yCoord);
+        }
+    }
 }
 
 [System.Serializable]

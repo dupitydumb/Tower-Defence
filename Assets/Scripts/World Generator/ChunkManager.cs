@@ -21,19 +21,26 @@ public class ChunkManager : MonoBehaviour
     {
         foreach (Chunk chunk in chunks)
         {
-            float distance = Vector2.Distance(player.position, chunk.transform.position);
-            if (distance > disableDistance)
+            if (Vector2.Distance(player.position, chunk.transform.position) > destroyDistance)
             {
-                foreach (Transform child in chunk.transform)
+                
+            }
+            else if (Vector2.Distance(player.position, chunk.transform.position) > disableDistance && chunk.isActive)
+            {
+                chunk.isActive = false;
+                //Deactivate children
+                for (int i = 0; i < chunk.transform.childCount; i++)
                 {
-                    child.gameObject.SetActive(false);
+                    chunk.transform.GetChild(i).gameObject.SetActive(false);
                 }
             }
-            else if (distance < enableDistance)
+            else if (Vector2.Distance(player.position, chunk.transform.position) < enableDistance && !chunk.isActive)
             {
-                foreach (Transform child in chunk.transform)
+                chunk.isActive = true;
+                //Activate children
+                for (int i = 0; i < chunk.transform.childCount; i++)
                 {
-                    child.gameObject.SetActive(true);
+                    chunk.transform.GetChild(i).gameObject.SetActive(true);
                 }
             }
         }

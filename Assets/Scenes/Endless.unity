@@ -14589,15 +14589,6 @@ MonoBehaviour:
     prefab: {fileID: 0}
     percentaseToSpawn: 0.5
     offset: 0
-  - pool: []
-    threshold: 0.2
-    prefabVariant:
-    - {fileID: 485112576827085730, guid: 2ded536f7cad18f4d8505112691375fd, type: 3}
-    - {fileID: 9116819812560232176, guid: 962b6455285b374408dc95739630a030, type: 3}
-    - {fileID: 672870975014928175, guid: a0fc5785ab11cf34887bb09da837a292, type: 3}
-    prefab: {fileID: 0}
-    percentaseToSpawn: 0.8
-    offset: 0
   terrainData: []
 --- !u!4 &1080745896
 Transform:
@@ -14629,8 +14620,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 2146887101}
-  disableDistance: 50
-  enableDistance: 80
+  disableDistance: 80
+  enableDistance: 50
   destroyDistance: 200
   chunks: []
 --- !u!1 &1094423631
