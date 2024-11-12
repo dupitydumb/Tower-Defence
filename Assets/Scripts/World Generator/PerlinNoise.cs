@@ -19,6 +19,7 @@ public class PerlinNoise : MonoBehaviour
     public Transform player;
     public float generationDistance = 20.0f;
 
+    public TerrainData[] terrainData;
     private Transform environmentParent;
     private Transform objectPoolParent;
     private HashSet<Vector2Int> generatedChunks = new HashSet<Vector2Int>();
@@ -33,22 +34,20 @@ public class PerlinNoise : MonoBehaviour
 
     void Start()
     {
+        Application.targetFrameRate = 60;
         grid = GameObject.FindObjectOfType<Grid>();
         environmentParent = new GameObject("Environment").transform;
         objectPoolParent = new GameObject("UnusedPerlinTile").transform;
         player = GameObject.FindWithTag("Player").transform;
         chunkManager = GetComponent<ChunkManager>();
         Vector2Int pos = new Vector2Int(Mathf.FloorToInt(player.position.x / chunkSize), Mathf.FloorToInt(player.position.y / chunkSize));
-        StartCoroutine(GeneratorEnviromentPool(100, treePrefab[UnityEngine.Random.Range(0, treePrefab.Length)], treesPool));
-        StartCoroutine(GeneratorEnviromentPool(100, stonePrefab[UnityEngine.Random.Range(0, stonePrefab.Length)], stonesPool));
+        StartCoroutine(GeneratorEnviromentPool(300, treePrefab[UnityEngine.Random.Range(0, treePrefab.Length)], treesPool));
+        StartCoroutine(GeneratorEnviromentPool(300, stonePrefab[UnityEngine.Random.Range(0, stonePrefab.Length)], stonesPool));
         StartCoroutine(GeneratorEnviromentPool(500, grassPrefab[UnityEngine.Random.Range(0, grassPrefab.Length)], grassPool));
     }
 
 
-    bool isEnvironmentPoolEmpty()
-    {
-        return perlinTilesPool.Count < 100 || treesPool.Count < 100 || stonesPool.Count < 100 || grassPool.Count < 100;
-    }
+    bool isGeneratinPool = false;
     void Update()
     {
         if (perlinTilesPool.Count < 100)
@@ -67,26 +66,14 @@ public class PerlinNoise : MonoBehaviour
         {
             StartCoroutine(GeneratorEnviromentPool(20, grassPrefab[UnityEngine.Random.Range(0, grassPrefab.Length)], grassPool));
         }
-
-        if (isEnvironmentPoolEmpty())
+        if (!isGeneratinPool)
         {
-            return;
+            GenerateChunksNearPlayer();
         }
-
-        GenerateChunksNearPlayer();
     }
 
     void GenerateChunksNearPlayer()
     {
-        // Check if chunk already exists
-        foreach (GameObject chunk in chunks)
-        {
-            if (chunk.GetComponent<Chunk>().position == new Vector2Int(Mathf.FloorToInt(player.position.x / chunkSize), Mathf.FloorToInt(player.position.y / chunkSize)))
-            {
-                chunk.SetActive(true);
-                return;
-            }
-        }
 
         Vector3 playerPosition = player.position;
         Vector2Int playerChunk = new Vector2Int(Mathf.FloorToInt(playerPosition.x / chunkSize), Mathf.FloorToInt(playerPosition.y / chunkSize));
@@ -112,6 +99,7 @@ public class PerlinNoise : MonoBehaviour
 
     IEnumerator GeneratorEnviromentPool(int amount, GameObject prefab, List<GameObject> pool)
     {
+        isGeneratinPool = true;
         for (int i = 0; i < amount; i++)
         {
             GameObject obj = Instantiate(prefab, Vector3.zero, Quaternion.identity);
@@ -120,6 +108,7 @@ public class PerlinNoise : MonoBehaviour
             pool.Add(obj);
             yield return null;
         }
+        isGeneratinPool = false;
     }
     IEnumerator GenerateChunk(Vector2Int chunkPosition, int chunkSize)
     {
@@ -132,7 +121,10 @@ public class PerlinNoise : MonoBehaviour
         chunks.Add(chunk);
         //Load environment background from resources
         Instantiate(Resources.Load<GameObject>("Prefabs/Enviroment/Desert"), chunk.transform.position, Quaternion.identity, chunk.transform);
-        int batchSize = 100;
+        
+        //Set batch size depending on current frame rate
+        int batchSize = Application.targetFrameRate > 0 ? chunkSize * chunkSize / Application.targetFrameRate : chunkSize * chunkSize;
+
         int count = 0;
         for (int x = 0; x < chunkSize; x++)
         {
@@ -143,6 +135,21 @@ public class PerlinNoise : MonoBehaviour
                 float yCoord = ((chunkPosition.y * chunkSize + y) / (float)chunkSize * scale);
                 float sample = Mathf.PerlinNoise(xCoord, yCoord);
                 Vector3Int cellPosition = new Vector3Int(chunkPosition.x * chunkSize + x, chunkPosition.y * chunkSize + y, 0);
+
+                foreach (TerrainData terrain in terrainData)
+                {
+                    if (sample > terrain.threshold)
+                    {
+                        GameObject terrainObject = Instantiate(terrain.prefab, grid.GetCellCenterWorld(cellPosition), Quaternion.identity, chunk.transform);
+                        terrainObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Enviroment/Terrain/" + terrain.name);
+                        break;
+                    }
+                    else if (sample > 0.3f)
+                    {
+                        break;
+                    }
+                }
+
                 if (sample > treeThreshold)
                 {
                     // 70% chance to spawn a tree
@@ -156,13 +163,6 @@ public class PerlinNoise : MonoBehaviour
                             trees.SetActive(true);
                             treesPool.Remove(trees);
                         }
-                        else
-                        {
-                            GameObject grass = Instantiate(grassPrefab[Random.Range(0, grassPrefab.Length)], grid.GetCellCenterWorld(cellPosition), Quaternion.identity);
-                            grass.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            grass.transform.parent = chunk.transform;
-                            
-                        }
                         
                     }
                     else
@@ -174,13 +174,6 @@ public class PerlinNoise : MonoBehaviour
                             stone.transform.parent = chunk.transform;
                             stone.SetActive(true);
                             stonesPool.Remove(stone);
-                        }
-                        else
-                        {
-                            GameObject grass = Instantiate(grassPrefab[Random.Range(0, grassPrefab.Length)], grid.GetCellCenterWorld(cellPosition), Quaternion.identity);
-                            grass.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            grass.transform.parent = chunk.transform;
-                            grass.SetActive(true);
                         }
                     }
                 }
@@ -197,13 +190,6 @@ public class PerlinNoise : MonoBehaviour
                             stone.SetActive(true);
                             stonesPool.Remove(stone);
                         }
-                        else
-                        {
-                            GameObject grass = Instantiate(grassPrefab[Random.Range(0, grassPrefab.Length)], grid.GetCellCenterWorld(cellPosition), Quaternion.identity);
-                            grass.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            grass.transform.parent = chunk.transform;
-                            grass.SetActive(true);
-                        }
                     }
                     else
                     {
@@ -214,13 +200,6 @@ public class PerlinNoise : MonoBehaviour
                             trees.transform.parent = chunk.transform;
                             trees.SetActive(true);
                             treesPool.Remove(trees);
-                        }
-                        else
-                        {
-                            GameObject grass = Instantiate(grassPrefab[Random.Range(0, grassPrefab.Length)], grid.GetCellCenterWorld(cellPosition), Quaternion.identity);
-                            grass.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            grass.transform.parent = chunk.transform;
-                            grass.SetActive(true);
                         }
                     }
                 }
@@ -237,13 +216,6 @@ public class PerlinNoise : MonoBehaviour
                             grass.SetActive(true);
                             grassPool.Remove(grass);
                         }
-                        else
-                        {
-                            GameObject grass = Instantiate(grassPrefab[Random.Range(0, grassPrefab.Length)], grid.GetCellCenterWorld(cellPosition), Quaternion.identity);
-                            grass.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            grass.transform.parent = chunk.transform;
-                            grass.SetActive(true);
-                        }
                     }
                     else if (Random.value < 0.7f)
                     {
@@ -255,13 +227,6 @@ public class PerlinNoise : MonoBehaviour
                             stone.SetActive(true);
                             stonesPool.Remove(stone);
                         }
-                        else
-                        {
-                            GameObject grass = Instantiate(grassPrefab[Random.Range(0, grassPrefab.Length)], grid.GetCellCenterWorld(cellPosition), Quaternion.identity);
-                            grass.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            grass.transform.parent = chunk.transform;
-                            grass.SetActive(true);
-                        }
                     }
                     else if (Random.value < 0.8f)
                     {
@@ -272,14 +237,6 @@ public class PerlinNoise : MonoBehaviour
                             trees.transform.parent = chunk.transform;
                             trees.SetActive(true);
                             treesPool.Remove(trees);
-                        }
-                        else
-                        {
-                            GameObject trees = Instantiate(treePrefab[Random.Range(0, treePrefab.Length)], grid.GetCellCenterWorld(cellPosition), Quaternion.identity);
-                            trees.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            trees.transform.parent = chunk.transform;
-                            trees.SetActive(true);
-            
                         }
                     }
                 }
@@ -301,5 +258,21 @@ public class PerlinNoise : MonoBehaviour
         transform.parent = gameObject.transform.Find("UnusedPerlinTile");
         perlinTile.SetActive(false);
         perlinTilesPool.Add(perlinTile);
+    }
+}
+
+[System.Serializable]
+public class TerrainData
+{
+    public string name;
+    public float threshold;
+    public GameObject prefab;
+
+    public TerrainData(string name, float threshold, GameObject prefab)
+    {
+        this.name = name;
+        this.threshold = threshold;
+        this.prefab = prefab;
+        prefab.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Enviroment/Terrain/" + name);
     }
 }

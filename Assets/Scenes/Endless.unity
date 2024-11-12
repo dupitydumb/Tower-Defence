@@ -14562,7 +14562,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61f97dd17daeae94c8684bdd5543c5a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkSize: 50
+  chunkSize: 25
   scale: 5
   treePrefab:
   - {fileID: 8443326756139691078, guid: 3114f030378ddcd48896fbd0bddf684d, type: 3}
@@ -14584,7 +14584,14 @@ MonoBehaviour:
   tilemap: {fileID: 0}
   grid: {fileID: 0}
   player: {fileID: 0}
-  generationDistance: 80
+  generationDistance: 50
+  terrainData:
+  - name: BorealForest
+    threshold: 0.6
+    prefab: {fileID: 5368005931345331997, guid: 05d8341efc463a041a05537bcb048dcf, type: 3}
+  - name: Soil
+    threshold: 0.5
+    prefab: {fileID: 5368005931345331997, guid: 05d8341efc463a041a05537bcb048dcf, type: 3}
 --- !u!4 &1080745896
 Transform:
   m_ObjectHideFlags: 0
@@ -14615,8 +14622,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 2146887101}
-  disableDistance: 70
-  enableDistance: 100
+  disableDistance: 50
+  enableDistance: 125
+  destroyDistance: 200
+  chunks: []
 --- !u!1 &1094423631
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,8 +7,9 @@ public class ChunkManager : MonoBehaviour
     public Transform player;
     public float disableDistance = 70.0f;
     public float enableDistance = 100.0f;
+    public float destroyDistance = 200.0f;
 
-    private List<Chunk> chunks = new List<Chunk>();
+    public List<Chunk> chunks = new List<Chunk>();
     // Start is called before the first frame update
     void Start()
     {
@@ -28,6 +29,11 @@ public class ChunkManager : MonoBehaviour
             else if (distance < enableDistance)
             {
                 chunk.gameObject.SetActive(true);
+            }
+            if (distance > destroyDistance)
+            {
+                RemoveChunk(chunk);
+                Destroy(chunk.gameObject);
             }
         }
     }
