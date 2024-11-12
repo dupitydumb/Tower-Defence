@@ -58,5 +58,6 @@ public class BuildUI : MonoBehaviour
 public enum BuildType
 {
     Turret,
-    Building
+    Building,
+    Tile
 }

@@ -38,7 +38,6 @@ public class GameManager : MonoBehaviour
     {
         inventoryManager = FindObjectOfType<InventoryManager>();
         enemySpawner = FindObjectOfType<EnemySpawner>();
-        dayText.text = "Day " + currentDay;
         UpdateEnemyLeftText();
         enemySpawner.OnEnemyDeath += UpdateEnemyLeftText;
     }
@@ -65,14 +64,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        timer += Time.deltaTime;
-
-        if (timer >= dayDuration)
-        {
-            NextDay();
-        }
-
-        UpdateClockText();
+        
     }
 
     private List<TurretData> pendingItems = new List<TurretData>();

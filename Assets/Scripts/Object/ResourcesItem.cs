@@ -34,15 +34,21 @@ public class ResourcesItem : MonoBehaviour
     }
 
     private bool isSoundPlayed = false;
+    private GameObject selectedObject;
     void CutTree()
     {  
-
-
         if (Vector3.Distance(player.transform.position, transform.position) < 1f)
         {
             progressBar.gameObject.SetActive(true);
-            if (Input.GetKey(KeyCode.R))
+            if (Input.GetMouseButton(0))
             {
+                if (selectedObject == null)
+                {
+                    selectedObject = Resources.Load<GameObject>("Prefabs/UI/SelectSprites");
+                    selectedObject = Instantiate(selectedObject, transform.position, Quaternion.identity);
+                    selectedObject.transform.SetParent(gameObject.transform);
+                    
+                }
                 if (!isSoundPlayed)
                 {
                     audioSource.Play();
@@ -67,9 +73,18 @@ public class ResourcesItem : MonoBehaviour
                     Destroy(gameObject);
                 }
             }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                cutTimer = 0.0f;
+                progressBar.value = cutTimer;
+                isSoundPlayed = false;
+                audioSource.Stop();
+            }
         }
         else
         {
+            Destroy(selectedObject);
+            selectedObject = null;
             progressBar.gameObject.SetActive(false);
             cutTimer = 0.0f; // Reset the timer if the player moves away
             progressBar.value = cutTimer; // Reset the progress bar

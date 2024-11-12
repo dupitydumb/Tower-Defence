@@ -91,12 +91,10 @@ public class PlayerBuild : MonoBehaviour
 
     void UpdatePreviewPosition(GameObject prefab)
     {
-        // Calculate the position in front of the player
-        Vector3 positionInFront = player.position + player.forward * distanceInFront;
-        // Snap the position to the grid
-        Vector3Int cellPosition = grid.WorldToCell(positionInFront);
-        Vector3 snappedPosition = grid.GetCellCenterWorld(cellPosition);
-        // Update the preview object's position
+        //Get mouse position
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 snappedPosition = grid.GetCellCenterWorld(grid.WorldToCell(mousePosition));
+        // Set the preview object's position to the snapped position
         prefab.transform.position = snappedPosition;
 
         if (currentBuildType == BuildType.Turret)
@@ -113,7 +111,7 @@ public class PlayerBuild : MonoBehaviour
         {
             
             validSprite.GetComponent<SpriteRenderer>().color = new Color(0, 255, 0, 0.3f);
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetMouseButtonDown(0))
             {
                 PlacePrefab();
                 isPlacing = false;
