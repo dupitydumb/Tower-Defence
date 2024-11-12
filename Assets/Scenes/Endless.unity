@@ -14562,36 +14562,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61f97dd17daeae94c8684bdd5543c5a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkSize: 25
+  chunkSize: 50
   scale: 5
-  treePrefab:
-  - {fileID: 8443326756139691078, guid: 3114f030378ddcd48896fbd0bddf684d, type: 3}
-  - {fileID: 8443326756139691078, guid: 45f11464b0998e44f94ccb2353dcaa70, type: 3}
-  - {fileID: 8443326756139691078, guid: a3fa81e0452d82440a6c9cc9c75d99ad, type: 3}
-  - {fileID: 8443326756139691078, guid: 09ffe2acb424b4c41868e84b3ca980e1, type: 3}
-  stonePrefab:
-  - {fileID: 791475899031683766, guid: 0576d132ed140d04285a69619b094a4e, type: 3}
-  - {fileID: 791475899031683766, guid: 67d73ebdd9e40fd45b78186e01b12420, type: 3}
-  - {fileID: 791475899031683766, guid: de71d98f0d4f78c45a296c75b652c3f3, type: 3}
-  grassPrefab:
-  - {fileID: 485112576827085730, guid: 2ded536f7cad18f4d8505112691375fd, type: 3}
-  - {fileID: 9116819812560232176, guid: 962b6455285b374408dc95739630a030, type: 3}
-  - {fileID: 672870975014928175, guid: a0fc5785ab11cf34887bb09da837a292, type: 3}
-  treeThreshold: 0.7
-  stoneThreshold: 0.65
-  grassThreshold: 0.5
   perlinTilePrefab: {fileID: 5385013223264821330, guid: 89af7d085d4c1b740ae63063885a831c, type: 3}
   tilemap: {fileID: 0}
   grid: {fileID: 0}
   player: {fileID: 0}
-  generationDistance: 50
-  terrainData:
-  - name: BorealForest
-    threshold: 0.6
-    prefab: {fileID: 5368005931345331997, guid: 05d8341efc463a041a05537bcb048dcf, type: 3}
-  - name: Soil
-    threshold: 0.5
-    prefab: {fileID: 5368005931345331997, guid: 05d8341efc463a041a05537bcb048dcf, type: 3}
+  generationDistance: 65
+  objectData:
+  - pool: []
+    threshold: 0.75
+    prefabVariant:
+    - {fileID: 791475899031683766, guid: 0576d132ed140d04285a69619b094a4e, type: 3}
+    - {fileID: 791475899031683766, guid: 67d73ebdd9e40fd45b78186e01b12420, type: 3}
+    - {fileID: 791475899031683766, guid: de71d98f0d4f78c45a296c75b652c3f3, type: 3}
+    prefab: {fileID: 0}
+    percentaseToSpawn: 0.3
+    offset: 0
+  - pool: []
+    threshold: 0.7
+    prefabVariant:
+    - {fileID: 8443326756139691078, guid: 3114f030378ddcd48896fbd0bddf684d, type: 3}
+    - {fileID: 8443326756139691078, guid: 45f11464b0998e44f94ccb2353dcaa70, type: 3}
+    - {fileID: 8443326756139691078, guid: a3fa81e0452d82440a6c9cc9c75d99ad, type: 3}
+    - {fileID: 8443326756139691078, guid: 09ffe2acb424b4c41868e84b3ca980e1, type: 3}
+    prefab: {fileID: 0}
+    percentaseToSpawn: 0.5
+    offset: 0
+  - pool: []
+    threshold: 0.2
+    prefabVariant:
+    - {fileID: 485112576827085730, guid: 2ded536f7cad18f4d8505112691375fd, type: 3}
+    - {fileID: 9116819812560232176, guid: 962b6455285b374408dc95739630a030, type: 3}
+    - {fileID: 672870975014928175, guid: a0fc5785ab11cf34887bb09da837a292, type: 3}
+    prefab: {fileID: 0}
+    percentaseToSpawn: 0.8
+    offset: 0
+  terrainData: []
 --- !u!4 &1080745896
 Transform:
   m_ObjectHideFlags: 0
@@ -14623,7 +14630,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 2146887101}
   disableDistance: 50
-  enableDistance: 125
+  enableDistance: 80
   destroyDistance: 200
   chunks: []
 --- !u!1 &1094423631

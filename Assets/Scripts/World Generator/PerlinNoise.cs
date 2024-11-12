@@ -2,34 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Linq;
 
 public class PerlinNoise : MonoBehaviour
 {
     public int chunkSize = 10;
     public float scale = 1.0f;
-    public GameObject[] treePrefab;
-    public GameObject[] stonePrefab;
-    public GameObject[] grassPrefab;
-    public float treeThreshold = 0.5f;
-    public float stoneThreshold = 0.4f;
-    public float grassThreshold = 0.7f;
     public GameObject perlinTilePrefab;
     public Tilemap tilemap;
     public Grid grid;
     public Transform player;
     public float generationDistance = 20.0f;
 
+    public ObjectData[] objectData;
     public TerrainData[] terrainData;
     private Transform environmentParent;
     private Transform objectPoolParent;
     private HashSet<Vector2Int> generatedChunks = new HashSet<Vector2Int>();
+    private HashSet<Vector3Int> generatedObjects = new HashSet<Vector3Int>();
     private List<GameObject> chunks = new List<GameObject>();
-
     private ChunkManager chunkManager;
-    List<GameObject> perlinTilesPool = new List<GameObject>();
-    List<GameObject> treesPool = new List<GameObject>();
-    List<GameObject> stonesPool = new List<GameObject>();
-    List<GameObject> grassPool = new List<GameObject>();
 
 
     void Start()
@@ -37,38 +29,32 @@ public class PerlinNoise : MonoBehaviour
         Application.targetFrameRate = 60;
         grid = GameObject.FindObjectOfType<Grid>();
         environmentParent = new GameObject("Environment").transform;
-        objectPoolParent = new GameObject("UnusedPerlinTile").transform;
+        objectPoolParent = new GameObject("objectPoolParent").transform;
         player = GameObject.FindWithTag("Player").transform;
         chunkManager = GetComponent<ChunkManager>();
         Vector2Int pos = new Vector2Int(Mathf.FloorToInt(player.position.x / chunkSize), Mathf.FloorToInt(player.position.y / chunkSize));
-        StartCoroutine(GeneratorEnviromentPool(300, treePrefab[UnityEngine.Random.Range(0, treePrefab.Length)], treesPool));
-        StartCoroutine(GeneratorEnviromentPool(300, stonePrefab[UnityEngine.Random.Range(0, stonePrefab.Length)], stonesPool));
-        StartCoroutine(GeneratorEnviromentPool(500, grassPrefab[UnityEngine.Random.Range(0, grassPrefab.Length)], grassPool));
     }
 
 
     bool isGeneratinPool = false;
     void Update()
     {
-        if (perlinTilesPool.Count < 100)
-        {
-            StartCoroutine(GeneratorEnviromentPool(20, perlinTilePrefab, perlinTilesPool));
-        }
-        if (treesPool.Count < 100)
-        {
-            StartCoroutine(GeneratorEnviromentPool(20, treePrefab[UnityEngine.Random.Range(0, treePrefab.Length)], treesPool));
-        }
-        if (stonesPool.Count < 100)
-        {
-            StartCoroutine(GeneratorEnviromentPool(20, stonePrefab[UnityEngine.Random.Range(0, stonePrefab.Length)], stonesPool));
-        }
-        if (grassPool.Count < 100)
-        {
-            StartCoroutine(GeneratorEnviromentPool(20, grassPrefab[UnityEngine.Random.Range(0, grassPrefab.Length)], grassPool));
-        }
         if (!isGeneratinPool)
         {
             GenerateChunksNearPlayer();
+        }
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            foreach (ObjectData objData in objectData)
+            {
+                GameObject obj = objData.pool.Find(o => !o.activeSelf);
+                if (obj == null)
+                {
+                    StartCoroutine(GenerateObjectPool(objData));
+                    Debug.Log(objData.pool.Count);
+                }
+            }
         }
     }
 
@@ -97,15 +83,14 @@ public class PerlinNoise : MonoBehaviour
         }
     }
 
-    IEnumerator GeneratorEnviromentPool(int amount, GameObject prefab, List<GameObject> pool)
+    IEnumerator GenerateObjectPool(ObjectData objData)
     {
         isGeneratinPool = true;
-        for (int i = 0; i < amount; i++)
+        for (int i = 0; i < 10; i++)
         {
-            GameObject obj = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+            GameObject obj = Instantiate(objData.prefabVariant[Random.Range(0, objData.prefabVariant.Length)], Vector3.zero, Quaternion.identity, objectPoolParent);
             obj.SetActive(false);
-            obj.transform.parent = environmentParent;
-            pool.Add(obj);
+            objData.pool.Add(obj);
             yield return null;
         }
         isGeneratinPool = false;
@@ -124,8 +109,11 @@ public class PerlinNoise : MonoBehaviour
         
         //Set batch size depending on current frame rate
         int batchSize = Application.targetFrameRate > 0 ? chunkSize * chunkSize / Application.targetFrameRate : chunkSize * chunkSize;
-
         int count = 0;
+
+        Dictionary<Vector3Int, List<Vector3Int>> terrainGroups = new Dictionary<Vector3Int, List<Vector3Int>>();
+
+        List<GameObject> objectsInChunk = new List<GameObject>();
         for (int x = 0; x < chunkSize; x++)
         {
             for (int y = 0; y < chunkSize; y++)
@@ -136,110 +124,49 @@ public class PerlinNoise : MonoBehaviour
                 float sample = Mathf.PerlinNoise(xCoord, yCoord);
                 Vector3Int cellPosition = new Vector3Int(chunkPosition.x * chunkSize + x, chunkPosition.y * chunkSize + y, 0);
 
-                foreach (TerrainData terrain in terrainData)
+                if (terrainData != null)
                 {
-                    if (sample > terrain.threshold)
+                    foreach (TerrainData terrain in terrainData)
                     {
-                        GameObject terrainObject = Instantiate(terrain.prefab, grid.GetCellCenterWorld(cellPosition), Quaternion.identity, chunk.transform);
-                        terrainObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Enviroment/Terrain/" + terrain.name);
-                        break;
-                    }
-                    else if (sample > 0.3f)
-                    {
-                        break;
+                        if (sample > terrain.threshold)
+                        {
+                            if (!terrainGroups.ContainsKey(cellPosition))
+                            {
+                                terrainGroups.Add(cellPosition, new List<Vector3Int>());
+                            }
+                            terrainGroups[cellPosition].Add(cellPosition);
+                        }
                     }
                 }
+                
 
-                if (sample > treeThreshold)
+                foreach (ObjectData objData in objectData)
                 {
-                    // 70% chance to spawn a tree
-                    if (Random.value < 0.7f)
+                    if (sample > objData.threshold && Random.Range(0.0f, 1.0f) < objData.percentaseToSpawn)
                     {
-                        if (treesPool.Count > 0)
+                        GameObject obj = objData.pool.Find(o => !o.activeSelf);
+                        Debug.LogWarning(obj);
+                        if (obj == null)
                         {
-                            GameObject trees = treesPool[Random.Range(0, treesPool.Count)];
-                            trees.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            trees.transform.parent = chunk.transform;
-                            trees.SetActive(true);
-                            treesPool.Remove(trees);
+                            Debug.Log("Creating new object");
+                            obj = Instantiate(objData.prefabVariant[Random.Range(0, objData.prefabVariant.Length)], grid.GetCellCenterWorld(cellPosition), Quaternion.identity, chunk.transform);
+                            obj.transform.position += new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0);
+                            objData.pool.Add(obj);
                         }
-                        
-                    }
-                    else
-                    {
-                        if (stonesPool.Count > 0)
+                        else
                         {
-                            GameObject stone = stonesPool[Random.Range(0, stonesPool.Count)];
-                            stone.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            stone.transform.parent = chunk.transform;
-                            stone.SetActive(true);
-                            stonesPool.Remove(stone);
+                            Debug.Log("Reusing object");
+                            obj.transform.position = grid.GetCellCenterWorld(cellPosition);
+                            obj.transform.position += new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0);
+                            obj.transform.SetParent(chunk.transform);
+                            obj.SetActive(true);
                         }
+                        objectsInChunk.Add(obj);
                     }
+                    
+                    generatedObjects.Add(cellPosition);
                 }
-                else if (sample > stoneThreshold)
-                {
-                    // 70% chance to spawn a stone
-                    if (Random.value < 0.7f)
-                    {
-                        if (stonesPool.Count > 0)
-                        {
-                            GameObject stone = stonesPool[Random.Range(0, stonesPool.Count)];
-                            stone.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            stone.transform.parent = chunk.transform;
-                            stone.SetActive(true);
-                            stonesPool.Remove(stone);
-                        }
-                    }
-                    else
-                    {
-                        if (treesPool.Count > 0)
-                        {
-                            GameObject trees = treesPool[Random.Range(0, treesPool.Count)];
-                            trees.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            trees.transform.parent = chunk.transform;
-                            trees.SetActive(true);
-                            treesPool.Remove(trees);
-                        }
-                    }
-                }
-                else if (sample > grassThreshold)
-                {
-                    //70% chance to spawn grass
-                    if (Random.value < 0.5f)
-                    {
-                        if (grassPool.Count > 0)
-                        {
-                            GameObject grass = grassPool[Random.Range(0, grassPool.Count)];
-                            grass.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            grass.transform.parent = chunk.transform;
-                            grass.SetActive(true);
-                            grassPool.Remove(grass);
-                        }
-                    }
-                    else if (Random.value < 0.7f)
-                    {
-                        if (stonesPool.Count > 0)
-                        {
-                            GameObject stone = stonesPool[Random.Range(0, stonesPool.Count)];
-                            stone.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            stone.transform.parent = chunk.transform;
-                            stone.SetActive(true);
-                            stonesPool.Remove(stone);
-                        }
-                    }
-                    else if (Random.value < 0.8f)
-                    {
-                        if (treesPool.Count > 0)
-                        {
-                            GameObject trees = treesPool[Random.Range(0, treesPool.Count)];
-                            trees.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            trees.transform.parent = chunk.transform;
-                            trees.SetActive(true);
-                            treesPool.Remove(trees);
-                        }
-                    }
-                }
+                
                 count++;
                 if (count >= batchSize)
                 {
@@ -253,12 +180,6 @@ public class PerlinNoise : MonoBehaviour
         transform.GetChild(0).gameObject.SetActive(false);
     }
 
-    public void ReturnPerlinTileToPool(GameObject perlinTile)
-    {
-        transform.parent = gameObject.transform.Find("UnusedPerlinTile");
-        perlinTile.SetActive(false);
-        perlinTilesPool.Add(perlinTile);
-    }
 }
 
 [System.Serializable]
@@ -268,11 +189,32 @@ public class TerrainData
     public float threshold;
     public GameObject prefab;
 
-    public TerrainData(string name, float threshold, GameObject prefab)
+    public List<GameObject> pool;
+    public TerrainData(string name, float threshold, GameObject prefab, List<GameObject> pool)
     {
         this.name = name;
         this.threshold = threshold;
         this.prefab = prefab;
+        this.pool = pool;
         prefab.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Enviroment/Terrain/" + name);
+    }
+}
+[System.Serializable]
+public class ObjectData
+{
+    public List<GameObject> pool;
+    public float threshold;
+
+    public GameObject[] prefabVariant;
+    public GameObject prefab;
+    public float percentaseToSpawn;
+    public float offset;
+    public ObjectData(string name, float threshold, GameObject prefab, List<GameObject> pool, float percentaseToSpawn, float offset)
+    {
+        this.threshold = threshold;
+        this.prefab = prefabVariant[Random.Range(0, prefabVariant.Length)];
+        this.pool = pool;
+        this.percentaseToSpawn = percentaseToSpawn;
+        this.offset = offset;
     }
 }

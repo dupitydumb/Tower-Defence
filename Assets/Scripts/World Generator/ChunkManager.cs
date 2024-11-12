@@ -24,16 +24,17 @@ public class ChunkManager : MonoBehaviour
             float distance = Vector2.Distance(player.position, chunk.transform.position);
             if (distance > disableDistance)
             {
-                chunk.gameObject.SetActive(false);
+                foreach (Transform child in chunk.transform)
+                {
+                    child.gameObject.SetActive(false);
+                }
             }
             else if (distance < enableDistance)
             {
-                chunk.gameObject.SetActive(true);
-            }
-            if (distance > destroyDistance)
-            {
-                RemoveChunk(chunk);
-                Destroy(chunk.gameObject);
+                foreach (Transform child in chunk.transform)
+                {
+                    child.gameObject.SetActive(true);
+                }
             }
         }
     }
