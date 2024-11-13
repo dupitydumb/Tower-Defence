@@ -24,7 +24,7 @@ public class PerlinNoise : MonoBehaviour
     private HashSet<Vector3Int> generatedObjects = new HashSet<Vector3Int>();
     private List<GameObject> chunks = new List<GameObject>();
     private ChunkManager chunkManager;
-
+    private TerrainGenerator terrainGenerator;
 
     void Start()
     {
@@ -34,6 +34,7 @@ public class PerlinNoise : MonoBehaviour
         objectPoolParent = new GameObject("objectPoolParent").transform;
         player = GameObject.FindWithTag("Player").transform;
         chunkManager = GetComponent<ChunkManager>();
+        terrainGenerator = GetComponent<TerrainGenerator>();
         Vector2Int pos = new Vector2Int(Mathf.FloorToInt(player.position.x / chunkSize), Mathf.FloorToInt(player.position.y / chunkSize));
     }
 
@@ -50,6 +51,8 @@ public class PerlinNoise : MonoBehaviour
         {
             foreach (ObjectData objData in objectData)
             {
+                //Remove null objects from pool
+                objData.pool.RemoveAll(o => o == null);
                 GameObject obj = objData.pool.Find(o => !o.activeSelf);
                 if (obj == null)
                 {
@@ -78,6 +81,7 @@ public class PerlinNoise : MonoBehaviour
                     {
                         transform.GetChild(0).gameObject.SetActive(true);
                         StartCoroutine(GenerateChunk(chunkPosition, chunkSize));
+                        terrainGenerator.GenerateTerrain(chunkPosition, chunkSize);
                         generatedChunks.Add(chunkPosition);
                     }
                 }
@@ -133,7 +137,7 @@ public class PerlinNoise : MonoBehaviour
                     foreach (TerrainData terrain in terrainData)
                     {
                         Debug.LogWarning("Terrain data is not nullxx");
-                        if (sample > terrain.threshold)
+                        if (sample > terrain.minThreshold && sample < terrain.maxThreshold)
                         {
                             foreach (Tilemap tilemap in tilemaps)
                             {
@@ -158,27 +162,36 @@ public class PerlinNoise : MonoBehaviour
                 {
                     if (sample > objData.threshold && Random.Range(0.0f, 1.0f) < objData.percentaseToSpawn)
                     {
-                        GameObject obj = objData.pool.Find(o => !o.activeSelf);
-                        Debug.LogWarning(obj);
-                        if (obj == null)
+                        try 
                         {
-                            Debug.Log("Creating new object");
-                            obj = Instantiate(objData.prefabVariant[Random.Range(0, objData.prefabVariant.Length)], grid.GetCellCenterWorld(cellPosition), Quaternion.identity, chunk.transform);
-                            obj.transform.position += new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0);
-                            objData.pool.Add(obj);
+                            GameObject obj = objData.pool.Find(o => !o.activeSelf);
+                            Debug.LogWarning(obj);
+                            if (obj == null)
+                            {
+                                Debug.Log("Creating new object");
+                                obj = Instantiate(objData.prefabVariant[Random.Range(0, objData.prefabVariant.Length)], grid.GetCellCenterWorld(cellPosition), Quaternion.identity, chunk.transform);
+                                obj.transform.position += new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0);
+                                objData.pool.Add(obj);
+                            }
+                            else
+                            {
+                                Debug.Log("Reusing object");
+                                obj.transform.position = grid.GetCellCenterWorld(cellPosition);
+                                obj.transform.position += new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0);
+                                obj.transform.SetParent(chunk.transform);
+                                obj.SetActive(true);
+                            }
+                            if (!chunk.GetComponent<Chunk>().objects.ContainsKey(cellPosition))
+                            {
+                                chunk.GetComponent<Chunk>().objects.Add(cellPosition, obj);
+                            }
                         }
-                        else
+                        catch (System.Exception e)
                         {
-                            Debug.Log("Reusing object");
-                            obj.transform.position = grid.GetCellCenterWorld(cellPosition);
-                            obj.transform.position += new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0);
-                            obj.transform.SetParent(chunk.transform);
-                            obj.SetActive(true);
+                            Debug.LogError("ErrorLoadingObject: " + e);
+                            continue;
                         }
-                        if (!chunk.GetComponent<Chunk>().objects.ContainsKey(cellPosition))
-                        {
-                            chunk.GetComponent<Chunk>().objects.Add(cellPosition, obj);
-                        }
+                        
 
                     }
                     
@@ -220,13 +233,15 @@ public class PerlinNoise : MonoBehaviour
 public class TerrainData
 {
     public Tile tile;
-    public float threshold;
+    public float minThreshold;
+    public float maxThreshold;
     public string layerName;
     public float spawnChance;
-    public TerrainData(Tile tile, float threshold, GameObject prefab, List<GameObject> pool, string layer, float spawnChance)
+    public TerrainData(Tile tile, float MinThreshold, float maxThreshold, GameObject prefab, List<GameObject> pool, string layer, float spawnChance)
     {
         this.tile = tile;
-        this.threshold = threshold;
+        this.minThreshold = MinThreshold;
+        this.maxThreshold = maxThreshold;
         this.layerName = layer;
         this.spawnChance = spawnChance;
     }
