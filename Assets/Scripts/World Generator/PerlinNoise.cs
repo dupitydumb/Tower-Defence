@@ -11,7 +11,7 @@ public class PerlinNoise : MonoBehaviour
     public int chunkSize = 10;
     public float scale = 1.0f;
     public GameObject perlinTilePrefab;
-    public Tilemap tilemap;
+    public Tilemap[] tilemaps;
     public Grid grid;
     public Transform player;
     public float generationDistance = 20.0f;
@@ -129,15 +129,26 @@ public class PerlinNoise : MonoBehaviour
 
                 if (terrainData != null)
                 {
+                    Debug.LogWarning("Terrain data is not null");
                     foreach (TerrainData terrain in terrainData)
                     {
+                        Debug.LogWarning("Terrain data is not nullxx");
                         if (sample > terrain.threshold)
                         {
-                            if (!terrainGroups.ContainsKey(cellPosition))
+                            foreach (Tilemap tilemap in tilemaps)
                             {
-                                terrainGroups.Add(cellPosition, new List<Vector3Int>());
+                                if (tilemap.name == terrain.layerName && Random.Range(0.0f, 1.0f) < terrain.spawnChance)
+                                {
+                                    tilemap.SetTile(tilemap.WorldToCell(grid.GetCellCenterWorld(cellPosition)), terrain.tile);
+                                    //oFfset tile position little bit
+                                    Vector3 offset = new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0);
+                                    
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("Tilemap name : " + tilemap.name + " Terrain layer name : " + terrain.layerName);
+                                }
                             }
-                            terrainGroups[cellPosition].Add(cellPosition);
                         }
                     }
                 }
@@ -166,7 +177,6 @@ public class PerlinNoise : MonoBehaviour
                         }
                         if (!chunk.GetComponent<Chunk>().objects.ContainsKey(cellPosition))
                         {
-                            Debug.LogErrorFormat("Adding object : {0} to chunk : {1}", obj, chunk.GetComponent<Chunk>());
                             chunk.GetComponent<Chunk>().objects.Add(cellPosition, obj);
                         }
 
@@ -209,18 +219,16 @@ public class PerlinNoise : MonoBehaviour
 [System.Serializable]
 public class TerrainData
 {
-    public string name;
+    public Tile tile;
     public float threshold;
-    public GameObject prefab;
-
-    public List<GameObject> pool;
-    public TerrainData(string name, float threshold, GameObject prefab, List<GameObject> pool)
+    public string layerName;
+    public float spawnChance;
+    public TerrainData(Tile tile, float threshold, GameObject prefab, List<GameObject> pool, string layer, float spawnChance)
     {
-        this.name = name;
+        this.tile = tile;
         this.threshold = threshold;
-        this.prefab = prefab;
-        this.pool = pool;
-        prefab.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Enviroment/Terrain/" + name);
+        this.layerName = layer;
+        this.spawnChance = spawnChance;
     }
 }
 [System.Serializable]
