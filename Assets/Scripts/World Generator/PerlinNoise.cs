@@ -164,6 +164,8 @@ public class PerlinNoise : MonoBehaviour
                     {
                         try 
                         {
+                            //Remove null objects from pool
+                            objData.pool.RemoveAll(o => o == null);
                             GameObject obj = objData.pool.Find(o => !o.activeSelf);
                             Debug.LogWarning(obj);
                             if (obj == null)

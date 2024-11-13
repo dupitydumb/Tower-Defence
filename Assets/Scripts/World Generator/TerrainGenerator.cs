@@ -9,7 +9,7 @@ public class TerrainGenerator : MonoBehaviour
     private Grid grid;
     public int width = 100;
     public int height = 100;
-    public Tilemap terrainTilemap;
+    public Tilemap[] terrainTilemap;
 
     [Header("Generation Settings Perlin Noise")]
     public float scale = 20f;
@@ -50,14 +50,12 @@ public class TerrainGenerator : MonoBehaviour
 
                 foreach (TerrainData terrainData in terrainDatas)
                 {
-                    if (sample >= terrainData.minThreshold && sample <= terrainData.maxThreshold)
+                    foreach (Tilemap tilemap in terrainTilemap)
                     {
-                        Debug.Log("Tile: " + terrainData.tile.name + " Sample: " + sample);
-                        terrainTilemap.SetTile(cellPosition, terrainData.tile);
-                    }
-                    else
-                    {
-                        Debug.Log("No tile found for sample: " + sample);
+                        if (sample >= terrainData.minThreshold && sample <= terrainData.maxThreshold && tilemap.name == terrainData.layerName)
+                        {
+                            tilemap.SetTile(cellPosition, terrainData.tile);
+                        }
                     }
                 }
 
