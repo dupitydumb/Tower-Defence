@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
+    public ItemsData itemDrop;
     private AudioSource audioSource;
     public AudioClip deathSound;
     public AudioClip hitSound;
@@ -146,7 +147,7 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
-        GameManager.instance.inventoryManager.AddItem(ItemsType.Gold, 1);
+        GameManager.instance.inventoryManager.AddItem(itemDrop, 1);
         audioSource.PlayOneShot(deathSound);
         Destroy(gameObject);
     }

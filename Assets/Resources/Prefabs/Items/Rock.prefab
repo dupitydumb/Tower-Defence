@@ -101,6 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70af9c5ea6d35ab4e8d476c382736ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemData: {fileID: 11400000, guid: 7647859e10ce84a4c97e2640f84e9521, type: 2}
   cutSound: {fileID: 8300000, guid: f75c75b97905d954cb63b4b9271b8391, type: 3}
   type: 1
   cutTime: 1

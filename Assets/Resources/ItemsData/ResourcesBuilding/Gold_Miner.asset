@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e099a29020bae5241bd00f6c300eb422, type: 3}
-  m_Name: Wood_Wall
+  m_Name: Gold_Miner
   m_EditorClassIdentifier: 
   category: 0
-  itemPrefab: {fileID: 0}
-  itemIcon: {fileID: 603587856, guid: 1682ec4d2ee665847ad69df86c6ee3af, type: 3}
-  itemName: 
-  itemDescription: 
+  itemPrefab: {fileID: 1995052781326395890, guid: eb14997ba4804314a93de78422487da2, type: 3}
+  itemIcon: {fileID: 21300000, guid: 1b6bb7e4eee3c444eb56dc8903d749fe, type: 3}
+  itemName: Gold_Miner
+  itemDescription: Mine Gold
   itemRecipe:
-  - itemData: {fileID: 0}
-    icon: {fileID: 0}
+  - icon: {fileID: 0}
     type: 0
-    amount: 5
+    amount: 100
+  - icon: {fileID: 0}
+    type: 1
+    amount: 100
   itemBuildTime: 0
   isCraftable: 1
-  isUnlocked: 0

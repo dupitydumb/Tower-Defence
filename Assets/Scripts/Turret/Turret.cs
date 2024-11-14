@@ -4,8 +4,20 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
-public class Turret : MonoBehaviour
+public class Turret : MonoBehaviour, IRecipe
 {
+    public RecipeData[] itemsRecipe;
+    public float craftTime;
+    public RecipeData[] ItemsRecipe
+    {
+        get => itemsRecipe;
+        set => itemsRecipe = value;
+    }
+    public float CraftTime 
+    {
+        get => craftTime;
+        set => craftTime = value;
+    }
     [SerializeField]
     public bool isEnable = false;
     public TurretData data; // The data of the turret

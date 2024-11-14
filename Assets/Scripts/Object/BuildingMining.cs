@@ -2,11 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildingMining : MonoBehaviour
+public class BuildingMining : MonoBehaviour, IRecipe
 {
+
+    public RecipeData[] itemsRecipe;
+    public float craftTime;
+    public RecipeData[] ItemsRecipe
+    {
+        get => itemsRecipe;
+        set => itemsRecipe = value;
+    }
+    public float CraftTime 
+    {
+        get => craftTime;
+        set => craftTime = value;
+    }
     // Start is called before the first frame update
     public bool isEnable = false;
-    public ItemsType type;
+    public ItemsData type;
     public int health = 100;
     public int maxHealth = 100;
     public int miningRate = 10;

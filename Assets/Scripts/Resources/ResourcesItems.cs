@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class ResourcesItems : MonoBehaviour
 {
+    public ItemsData itemData;
     private AudioSource audioSource;
     public AudioClip sound;
     public ItemsType type;
@@ -41,7 +42,7 @@ public class ResourcesItems : MonoBehaviour
             audioSource.pitch = Random.Range(0.9f, 1.1f);
             audioSource.Play();
             Destroy(soundObject, sound.length);
-            inventoryManager.AddItem(type, amount);
+            inventoryManager.AddItem(itemData, amount);
             Destroy(gameObject);
         }
         if (other.gameObject.CompareTag("Obstacle"))

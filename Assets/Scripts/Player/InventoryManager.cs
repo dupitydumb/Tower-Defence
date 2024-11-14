@@ -21,26 +21,27 @@ public class InventoryManager : MonoBehaviour
         
     }
 
-    public void AddItem(ItemsType type, int amount)
+    public void AddItem(ItemsData item, int amount)
     {
-        InventoryItem item = items.Find(i => i.type == type);
-        if (item != null)
+        InventoryItem inventoryItem = items.Find(i => i.itemData == item);
+        if (inventoryItem != null)
         {
-            item.amount += amount;
+            inventoryItem.amount += amount;
         }
         else
         {
             InventoryItem newItem = new InventoryItem();
-            newItem.type = type;
+            newItem.itemData = item;
             newItem.amount = amount;
             items.Add(newItem);
         }
+        
         OnInventoryChanged?.Invoke();
     }
 
-    public void RemoveItem(ItemsType type, int amount)
+    public void RemoveItem(ItemsData itemsData, int amount)
     {
-        InventoryItem item = items.Find(i => i.type == type);
+        InventoryItem item = items.Find(i => i.itemData == itemsData);
         if (item != null)
         {
             item.amount -= amount;
@@ -52,43 +53,29 @@ public class InventoryManager : MonoBehaviour
         OnInventoryChanged?.Invoke();
     }
 
-    public int GetAmount(ItemsType type)
+    public int GetAmount(ItemsData type)
     {
-        InventoryItem item = items.Find(i => i.type == type);
+        Debug.Log("Gettting amount of " + type.itemName);
+        InventoryItem item = items.Find(i => i.itemData == type);
         if (item != null)
         {
             return item.amount;
         }
-        else
-        {
-            return 0;
-        }
+        return 0;
     }
 }
 
 [System.Serializable]
 public class InventoryItem
 {
+    public ItemsData itemData;
     public Sprite icon;
-    public ItemsType type;
     public int amount;
 
     public InventoryItem()
     {
-        switch (type)
-        {
-            case ItemsType.Wood:
-                icon = Resources.Load<Sprite>("Sprites/wood");
-                break;
-            case ItemsType.Stone:
-                icon = Resources.Load<Sprite>("Sprites/stone");
-                break;
-            case ItemsType.Iron:
-                icon = Resources.Load<Sprite>("Sprites/iron");
-                break;
-            case ItemsType.Gold:
-                icon = Resources.Load<Sprite>("Sprites/gold");
-                break;
-        }
+        itemData = null;
+        icon = null;
+        amount = 0;
     }
 }

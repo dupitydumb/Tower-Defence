@@ -25,6 +25,6 @@ public class ResourcesUI : MonoBehaviour
 
     void UpdateText()
     {
-        text.text = inventoryManager.GetAmount(type).ToString();
+        
     }
 }

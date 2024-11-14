@@ -80,15 +80,7 @@ public class UpgradeBuildingUI : MonoBehaviour
         //Find amount of gold needed to upgrade
         int amountNeeded = selectedTurret.data.upgradeCost[selectedTurret.data.bulletDamageLevel - 1];
         //Check if player has enough gold
-        if (inventoryManager.GetAmount(ItemsType.Gold) >= amountNeeded)
-        {
-            //Remove gold from player's inventory
-            inventoryManager.RemoveItem(ItemsType.Gold, amountNeeded);
-            //Upgrade the turret
-            selectedTurret.data.bulletDamageLevel++;
-            //Update the UI
-            UpdateUI();
-        }
+
     }
 
     void UpgradeFireRate()
@@ -100,15 +92,6 @@ public class UpgradeBuildingUI : MonoBehaviour
         //Find amount of gold needed to upgrade
         int amountNeeded = selectedTurret.data.upgradeCost[selectedTurret.data.fireRateLevel - 1];
         //Check if player has enough gold
-        if (inventoryManager.GetAmount(ItemsType.Gold) >= amountNeeded)
-        {
-            //Remove gold from player's inventory
-            inventoryManager.RemoveItem(ItemsType.Gold, amountNeeded);
-            //Upgrade the turret
-            selectedTurret.data.fireRateLevel++;
-            //Update the UI
-            UpdateUI();
-        }
     }
 
     void UpgradeRange()
@@ -120,14 +103,5 @@ public class UpgradeBuildingUI : MonoBehaviour
         //Find amount of gold needed to upgrade
         int amountNeeded = selectedTurret.data.upgradeCost[selectedTurret.data.rangeLevel - 1];
         //Check if player has enough gold
-        if (inventoryManager.GetAmount(ItemsType.Gold) >= amountNeeded)
-        {
-            //Remove gold from player's inventory
-            inventoryManager.RemoveItem(ItemsType.Gold, amountNeeded);
-            //Upgrade the turret
-            selectedTurret.data.rangeLevel++;
-            //Update the UI
-            UpdateUI();
-        }
     }
 }

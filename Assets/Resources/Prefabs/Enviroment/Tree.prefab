@@ -177,6 +177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70af9c5ea6d35ab4e8d476c382736ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemData: {fileID: 11400000, guid: c9970917a5a1d59439dffdd3b8f63278, type: 2}
   cutSound: {fileID: 8300000, guid: 78905cd643b856e4085d0d2f8560e2dd, type: 3}
   type: 0
   cutTime: 2

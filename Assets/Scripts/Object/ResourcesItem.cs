@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class ResourcesItem : MonoBehaviour
 {
+    public ItemsData itemData;
     public AudioClip cutSound;
     private AudioSource audioSource;
     public ItemsType type;
@@ -102,6 +103,6 @@ public class ResourcesItem : MonoBehaviour
 
     void AddStone()
     {
-        inventoryManager.AddItem(type, Random.Range(4, 10));   
+        inventoryManager.AddItem(itemData, Random.Range(4, 10));   
     }
 }

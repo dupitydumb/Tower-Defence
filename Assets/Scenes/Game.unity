@@ -3017,6 +3017,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 352840155}
   m_CullTransparentMesh: 1
+--- !u!1 &368034570
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 368034571}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &368034571
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 368034570}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1080745896}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &391798433
 GameObject:
   m_ObjectHideFlags: 0
@@ -10435,7 +10466,7 @@ TilemapRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -5
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0.012000024, y: 0.012000024, z: 0}
+  m_ChunkCullingBounds: {x: 0.52400005, y: 0.52400005, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
@@ -19341,22 +19372,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61f97dd17daeae94c8684bdd5543c5a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridWidth: 70
-  gridHeight: 70
+  chunkSize: 10
   scale: 30
-  treePrefab:
-  - {fileID: 8443326756139691078, guid: 3114f030378ddcd48896fbd0bddf684d, type: 3}
-  - {fileID: 8443326756139691078, guid: 45f11464b0998e44f94ccb2353dcaa70, type: 3}
-  - {fileID: 8443326756139691078, guid: a3fa81e0452d82440a6c9cc9c75d99ad, type: 3}
-  - {fileID: 8443326756139691078, guid: 09ffe2acb424b4c41868e84b3ca980e1, type: 3}
-  stone:
-  - {fileID: 791475899031683766, guid: 0576d132ed140d04285a69619b094a4e, type: 3}
-  - {fileID: 791475899031683766, guid: 67d73ebdd9e40fd45b78186e01b12420, type: 3}
-  - {fileID: 791475899031683766, guid: de71d98f0d4f78c45a296c75b652c3f3, type: 3}
-  treeThreshold: 0.7
-  stoneThreshold: 0.65
-  tilemap: {fileID: 779669160}
   perlinTilePrefab: {fileID: 5385013223264821330, guid: 89af7d085d4c1b740ae63063885a831c, type: 3}
+  tilemaps: []
+  grid: {fileID: 0}
+  player: {fileID: 0}
+  generationDistance: 20
+  objectData: []
+  terrainData: []
 --- !u!4 &1080745896
 Transform:
   m_ObjectHideFlags: 0
@@ -19368,7 +19392,8 @@ Transform:
   m_LocalPosition: {x: -0.64635515, y: 7.5535173, z: -0.0006190599}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 368034571}
   m_Father: {fileID: 324364716}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -26909,7 +26934,7 @@ TilemapRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -5
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0.012000024, y: 0.012000024, z: 0}
+  m_ChunkCullingBounds: {x: 0.52400005, y: 0.52400005, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0

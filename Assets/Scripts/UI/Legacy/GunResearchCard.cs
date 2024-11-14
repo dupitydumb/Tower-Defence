@@ -36,15 +36,6 @@ public class GunResearchCard : MonoBehaviour
 
     public void UnlockGun()
     {
-        //Search gold in inventory
-        int goldNeeded = turretData.unlockCost;
-        int goldAmount = inventoryManager.GetAmount(ItemsType.Gold);
-        if (goldAmount >= goldNeeded)
-        {
-            inventoryManager.RemoveItem(ItemsType.Gold, goldNeeded);
-            //Unlock Next day
-            GameManager.instance.AddResearch(turretData);
-            price.text = "Researched";
-        }
+        
     }
 }
