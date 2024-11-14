@@ -3,61 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BuildUI : MonoBehaviour
+namespace ItemsHandler
 {
-    public TurretData turretData;
-    public BuildType buildType;
-    public string turretPrefab;
-
-    PlayerBuild playerBuild;
-    // Start is called before the first frame update
-    void Start()
-    {
-        playerBuild = FindObjectOfType<PlayerBuild>();
-        GameManager.instance.OnDayChange += UpdateUI;
-        UpdateUI();
-    }
-
-    void UpdateUI()
-    {
-        Image image = transform.GetChild(0).GetComponent<Image>();
-        if (buildType == BuildType.Turret)
-        {
-            if (turretData.isUnlocked)
-            {
-                //Change Color
-                image.color = Color.white;
-            }
-            else
-            {
-                image.color = Color.black;
-            }
-        }
-    }
-    // Update is called once per frame
-    void Update()
+    public class BuildUI : MonoBehaviour
     {
         
     }
 
-    public void BuildClicked()
+    public enum BuildType
     {
-        if (buildType == BuildType.Turret)
-        {
-            if (!turretData.isUnlocked)
-            {
-                Debug.Log("Turret is not unlocked");
-                return;
-            }
-        }
-        Debug.Log("Build clicked");
-        playerBuild.SetIsPlacing(turretPrefab, buildType);
+        Turret,
+        Building,
+        Tile
     }
 }
 
-public enum BuildType
-{
-    Turret,
-    Building,
-    Tile
-}
