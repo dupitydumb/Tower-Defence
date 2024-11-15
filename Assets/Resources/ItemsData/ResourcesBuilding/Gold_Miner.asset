@@ -15,14 +15,14 @@ MonoBehaviour:
   category: 0
   itemPrefab: {fileID: 1995052781326395890, guid: eb14997ba4804314a93de78422487da2, type: 3}
   itemIcon: {fileID: 21300000, guid: 1b6bb7e4eee3c444eb56dc8903d749fe, type: 3}
+  itemIconColor: {r: 1, g: 1, b: 1, a: 1}
   itemName: Gold_Miner
   itemDescription: Mine Gold
   itemRecipe:
-  - icon: {fileID: 0}
-    type: 0
+  - item: {fileID: 0}
     amount: 100
-  - icon: {fileID: 0}
-    type: 1
+  - item: {fileID: 0}
     amount: 100
   itemBuildTime: 0
   isCraftable: 1
+  isUnlocked: 0

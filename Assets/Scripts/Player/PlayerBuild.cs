@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 using System.Data.Common;
 using UnityEngine.Tilemaps;
-using Unity.VisualScripting;
+using UnityEditor;
 
 public class PlayerBuild : MonoBehaviour
 {
@@ -16,10 +16,12 @@ public class PlayerBuild : MonoBehaviour
     public float distanceInFront = 1.0f; // Distance in front of the player to place the prefab
     private InventoryManager inventoryManager; // Reference to the inventory manager
     public bool isPlacing;
-
+    public HashSet<Vector3Int> wallPositions = new HashSet<Vector3Int>();
+    public Dictionary<Vector3Int, GameObject> wallObjects = new Dictionary<Vector3Int, GameObject>();
     // Start is called before the first frame update
     void Start()
     {
+        wallPositions = new HashSet<Vector3Int>();
         inventoryManager = GameObject.FindObjectOfType<InventoryManager>();
         tilemap = GameObject.FindObjectOfType<Tilemap>();
         audioSource = GetComponent<AudioSource>();
@@ -45,84 +47,44 @@ public class PlayerBuild : MonoBehaviour
 
     private BuildType currentBuildType;
     public GameObject previewObject;
-    public void SetIsPlacing(string prefab, BuildType buildType)
+    public void SetIsPlacing(ItemsData items)
     {
-        if (GameManager.instance.gameState == GameState.Night)
-        {
-            return;
-        }
-        // Create a preview object
-        Debug.Log("Prefabs location: " + "Prefabs/Turret" + prefab);
-        switch (buildType)
-        {
-            case BuildType.Turret:
-                prefabToPlace = Resources.Load<GameObject>("Prefabs/Turret/" + prefab);
-                currentBuildType = BuildType.Turret;
-                break;
-            case BuildType.Building:
-                prefabToPlace = Resources.Load<GameObject>("Prefabs/Building/" + prefab);
-                currentBuildType = BuildType.Building;
-                break;
-            default:
-                break;
-        }
-
         if (previewObject != null)
         {
             Destroy(previewObject);
         }
-        GameObject preview = Instantiate(prefabToPlace);
-        previewObject = preview;
-        //disable Turnet script
-        if (buildType == BuildType.Turret)
-        {
-            previewObject.GetComponent<Turret>().isEnable = false;
-            
-        }
-        //disable BuildingMining script
-        if (buildType == BuildType.Building)
-        {
-            previewObject.GetComponent<BuildingMining>().isEnable = false;
-        }
-        previewObject.GetComponent<BoxCollider2D>().isTrigger = true;
-        previewObject.transform.Find("Canvas").gameObject.SetActive(true);
         isPlacing = true;
+        prefabToPlace = items.itemPrefab;
+        previewObject = Instantiate(items.itemPrefab);
+        previewObject.transform.SetParent(transform);
+        previewObject.GetComponent<BoxCollider2D>().isTrigger = true;
+        previewObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.3f);
+        
     }
 
     void UpdatePreviewPosition(GameObject prefab)
     {
-        // Calculate the position in front of the player
-        Vector3 positionInFront = player.position + player.forward * distanceInFront;
-        // Snap the position to the grid
-        Vector3Int cellPosition = grid.WorldToCell(positionInFront);
-        Vector3 snappedPosition = grid.GetCellCenterWorld(cellPosition);
-        // Update the preview object's position
-        prefab.transform.position = snappedPosition;
+        // Calculate the position in mouse position
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3Int cellPosition = grid.WorldToCell(mousePosition);
+        Vector3 position = grid.GetCellCenterWorld(cellPosition);
+        position.z = 0;
+        // Set the preview object's position
+        prefab.transform.position = position;
 
-        if (currentBuildType == BuildType.Turret)
-        {
-            GameObject rangeIndicator = prefab.transform.Find("Range").gameObject;
-            rangeIndicator.transform.localScale = new Vector3(0, 0, 1);
-            rangeIndicator.transform.localScale = new Vector3(prefab.GetComponent<Turret>().data.range[0] * 2.5f, prefab.GetComponent<Turret>().data.range[0] * 2.5f, 1);
-        }
+        
 
-        GameObject validSprite = prefab.transform.Find("Valid").gameObject;
-        validSprite.SetActive(true);
-        //Check if the position is valid & items are enough
-        if (CheckPosition(snappedPosition))
+        if (CheckPosition(position))
         {
-            
-            validSprite.GetComponent<SpriteRenderer>().color = new Color(0, 255, 0, 0.3f);
-            if (Input.GetKeyDown(KeyCode.E))
+            previewObject.GetComponent<SpriteRenderer>().color = new Color(1, 181, 5, 0.5f);
+            if (Input.GetMouseButtonDown(0))
             {
                 PlacePrefab();
-                isPlacing = false;
-                Destroy(previewObject);
             }
         }
         else
         {
-            validSprite.GetComponent<SpriteRenderer>().color = new Color(255, 0, 0, 0.3f);
+            previewObject.GetComponent<SpriteRenderer>().color = new Color(181, 0, 5, 0.5f);
         }
     }
 
@@ -130,46 +92,74 @@ public class PlayerBuild : MonoBehaviour
     {
         audioSource.PlayOneShot(buildSound);
         // Instantiate the prefab at the preview object's position
+        inventoryManager.RemoveItem(prefabToPlace.GetComponent<Wall>().itemData, 1);
         GameObject building = Instantiate(prefabToPlace, previewObject.transform.position, Quaternion.identity);
+        wallObjects.Add(grid.WorldToCell(previewObject.transform.position), building);
+        building.GetComponent<Wall>().Init();
+        wallPositions.Add(grid.WorldToCell(previewObject.transform.position));
         building.transform.GetComponent<BoxCollider2D>().enabled = true;
-        foreach (RecipeData item in building.GetComponent<IRecipe>().ItemsRecipe)
-        {
-            inventoryManager.RemoveItem(item.item, item.amount);
-        }
+        building.GetComponent<Wall>().gridPos = grid.WorldToCell(previewObject.transform.position);
+        building.GetComponent<Wall>().SetWallVariants(grid.WorldToCell(previewObject.transform.position));
+        building.GetComponent<Wall>().UpdateNeighborWalls();
+        Debug.LogWarning(wallPositions.Count);
+        Debug.Log("Placed building at " + grid.WorldToCell(previewObject.transform.position));
         // Deduct the items needed from the inventory
     }
 
     private Tilemap tilemap;
     bool CheckPosition(Vector3 position)
     {   
-        //Check what layer the preview object is on
-        
-
-        RecipeData[] itemsNeeded = previewObject.GetComponent<IRecipe>().ItemsRecipe;
+        // check if player has the item
+        if (inventoryManager.GetAmount(prefabToPlace.GetComponent<Wall>().itemData) <= 0)
+        {
+            Destroy(previewObject);
+            isPlacing = false;
+            return false;
+        }
         
         if (previewObject.GetComponent<BoxCollider2D>().IsTouchingLayers(LayerMask.GetMask("Obstacle")))
         {
             return false;
         }
-        foreach (RecipeData item in itemsNeeded)
+        // if collied with any other box collider
+        if (previewObject.GetComponent<BoxCollider2D>().IsTouchingLayers(LayerMask.GetMask("Wall")))
         {
-            if (inventoryManager.GetAmount(item.item) < item.amount)
-            {
-                return false;
-            }
-        }
-        if (currentBuildType == BuildType.Building)
-        {
-            BoxCollider2D collider = previewObject.GetComponent<BoxCollider2D>();
-            switch (previewObject.GetComponent<BuildingMining>().type)
-            {
-                // TODO: Check if the building is on the tilemap
-                    
-            }
+            return false;
         }
 
         
         // Check if the position is valid
         return true;
+    }
+}
+
+[CustomEditor(typeof(PlayerBuild))]
+public class PlayerBuildEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        PlayerBuild playerBuild = (PlayerBuild)target;
+
+        EditorGUILayout.LabelField("Wall Positions", EditorStyles.boldLabel);
+
+        if (playerBuild.wallPositions != null)
+        {
+            foreach (Vector3Int position in playerBuild.wallPositions)
+            {
+                EditorGUILayout.LabelField(position.ToString());
+            }
+        }
+        else
+        {
+            EditorGUILayout.LabelField("No wall positions");
+        }
+
+        //Addd button to refresh wall positions
+        if (GUILayout.Button("Refresh Wall Positions"))
+        {
+            
+        }
     }
 }

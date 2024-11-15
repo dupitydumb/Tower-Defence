@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: Wood_Wall
   m_EditorClassIdentifier: 
   category: 0
-  itemPrefab: {fileID: 0}
+  itemPrefab: {fileID: 953508865373098982, guid: edda3649f7dc47944bf831042fb03d9b, type: 3}
   itemIcon: {fileID: 603587856, guid: 1682ec4d2ee665847ad69df86c6ee3af, type: 3}
-  itemName: 
-  itemDescription: 
+  itemIconColor: {r: 0.8490566, g: 0.44456166, b: 0, a: 1}
+  itemName: Wood_Wall
+  itemDescription: Strong wall made of wood
   itemRecipe:
-  - itemData: {fileID: 0}
-    icon: {fileID: 0}
-    type: 0
+  - item: {fileID: 11400000, guid: c9970917a5a1d59439dffdd3b8f63278, type: 2}
     amount: 5
   itemBuildTime: 0
   isCraftable: 1
   isUnlocked: 0
+  isPlaceable: 1

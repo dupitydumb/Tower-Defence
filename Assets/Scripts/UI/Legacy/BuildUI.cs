@@ -51,7 +51,7 @@ public class BuildUI : MonoBehaviour
             }
         }
         Debug.Log("Build clicked");
-        playerBuild.SetIsPlacing(turretPrefab, buildType);
+        // playerBuild.SetIsPlacing(turretPrefab, buildType);
     }
 }
 

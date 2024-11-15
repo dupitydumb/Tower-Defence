@@ -15,6 +15,7 @@ MonoBehaviour:
   category: 0
   itemPrefab: {fileID: 0}
   itemIcon: {fileID: 21300000, guid: e9c55d0cd28f0a34c8108445aa22a5fb, type: 3}
+  itemIconColor: {r: 1, g: 1, b: 1, a: 1}
   itemName: Stone
   itemDescription: Stone Chunks
   itemRecipe: []

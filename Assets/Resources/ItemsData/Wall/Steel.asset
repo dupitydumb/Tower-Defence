@@ -10,19 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e099a29020bae5241bd00f6c300eb422, type: 3}
-  m_Name: Iron_Miner
+  m_Name: Steel
   m_EditorClassIdentifier: 
   category: 0
-  itemPrefab: {fileID: 1995052781326395890, guid: 7027cd5ff2bf58240aa2e6deb4c50a0f, type: 3}
-  itemIcon: {fileID: 21300000, guid: c96b6020f1a072540bb7b5d6859969ed, type: 3}
-  itemIconColor: {r: 1, g: 1, b: 1, a: 1}
-  itemName: Iron_Miner
-  itemDescription: Mine Iron
+  itemPrefab: {fileID: 953508865373098982, guid: edda3649f7dc47944bf831042fb03d9b, type: 3}
+  itemIcon: {fileID: 603587856, guid: 1682ec4d2ee665847ad69df86c6ee3af, type: 3}
+  itemIconColor: {r: 0.8490566, g: 0.8490566, b: 0.8490566, a: 1}
+  itemName: Steel
+  itemDescription: Strong wall made of wood
   itemRecipe:
-  - item: {fileID: 0}
-    amount: 100
-  - item: {fileID: 0}
-    amount: 100
+  - item: {fileID: 11400000, guid: c9970917a5a1d59439dffdd3b8f63278, type: 2}
+    amount: 10
   itemBuildTime: 0
   isCraftable: 1
   isUnlocked: 0
+  isPlaceable: 1

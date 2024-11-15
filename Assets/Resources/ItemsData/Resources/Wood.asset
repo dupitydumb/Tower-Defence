@@ -15,6 +15,7 @@ MonoBehaviour:
   category: 0
   itemPrefab: {fileID: 0}
   itemIcon: {fileID: 21300000, guid: 09613fe230fa27e4ca0b6a340424ccfc, type: 3}
+  itemIconColor: {r: 1, g: 1, b: 1, a: 1}
   itemName: Wood
   itemDescription: Wood Log
   itemRecipe: []

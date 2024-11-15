@@ -55,13 +55,19 @@ public class InventoryManager : MonoBehaviour
 
     public int GetAmount(ItemsData type)
     {
-        Debug.Log("Gettting amount of " + type.itemName);
         InventoryItem item = items.Find(i => i.itemData == type);
         if (item != null)
         {
             return item.amount;
         }
-        return 0;
+        else if (item == null)
+        {
+            return 0;
+        }
+        else
+        {
+            return 0;
+        }
     }
 }
 
